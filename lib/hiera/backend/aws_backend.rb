@@ -2,7 +2,7 @@ require "hiera/backend/aws/elasticache"
 
 module Hiera
   module Backend
-    class Aws_Backend
+    class Aws_backend
       def initialize
         begin
           require "aws-sdk"
@@ -15,43 +15,28 @@ module Hiera
       end
 
       def lookup(key, scope, order_override, resolution_type)
-        answer = nil
-
         Backend.datasources(scope, order_override) do |elem|
-          case elem
-          when /aws\/elasticache\/(.+)/
-            Hiera.debug("Looking up #{key} on elasticache cluster '#{$1}'")
-            
-            ec = Hiera::Aws::Elasticache.new
+          elements = elem.split "/"
+          next unless elements[0] == "aws"
 
-            case key
-            when "cache_nodes"
-              raw_answer = @elasticache.cache_cluster_nodes $1
-            when "some_test_array"
-              raw_answer = [ "/tmp/wurstbrot1", "/tmp/wurstbrot2", "/tmp/wurstbrot3" ]
-            else
-              raise "dont know how to lookup key #{key}"
-            end
-          end
+          service = elements[1]
+          params = elements[2]
 
-          new_answer = Backend.parse_answer(raw_answer, scope)
+          service_class = case service
+                          when "elasticache"
+                            Hiera::Backend::Aws::ElastiCache.new
+                          end
+          next if service_class.nil?
 
-          case resolution_type
-          when :array
-            raise Exception, "Hiera type mismatch: expected Array and got #{new_answer.class}" unless new_answer.kind_of? Array or new_answer.kind_of? String
-            answer ||= []
-            answer << new_answer
-          when :hash
-            raise Exception, "Hiera type mismatch: expected Hash and got #{new_answer.class}" unless new_answer.kind_of? Hash
-            answer ||= {}
-            answer = Backend.merge_answer(new_answer, answer)
-          else
-            answer = new_answer
-            break
-          end
+          value = service_class.lookup(key, params)
+          next if value.nil?
 
-          answer
+          # this only supports resolution_type => :priority at the moment.
+          # TODO implement :array and :hash merging
+          value = Backend.parse_answer(value, scope)
+          return value unless value.nil?
         end
+        nil
       end
     end
   end

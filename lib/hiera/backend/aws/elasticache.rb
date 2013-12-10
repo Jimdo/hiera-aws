@@ -1,8 +1,20 @@
 module Hiera
   module Backend
     module Aws
-      class Elasticache
+      class ElastiCache
+        def lookup(key, params)
+        end
 
+#            case key
+#            when "cache_nodes"
+#              raw_answer = @elasticache.cache_cluster_nodes $1
+#            when "some_test_array"
+#              raw_answer = [ "/tmp/wurstbrot1", "/tmp/wurstbrot2", "/tmp/wurstbrot3" ]
+#            else
+#              raise "dont know how to lookup key #{key}"
+#            end
+
+        
 # class ElastiCache
 #   def initialize
 #     @client = AWS::ElastiCache::Client.new
