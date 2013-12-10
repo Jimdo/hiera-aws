@@ -6,10 +6,10 @@ require 'hiera/aws/version'
 Gem::Specification.new do |spec|
   spec.name          = "hiera-aws"
   spec.version       = Hiera::Aws::VERSION
-  spec.authors       = ["Mathias Lafeldt"]
-  spec.email         = ["mathias.lafeldt@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.authors       = ["Mathias Lafeldt", "Deniz Adrian"]
+  spec.email         = ["mathias.lafeldt@jimdo.com", "deniz.adrian@jimdo.com"]
+  spec.description   = %q{Hiera AWS Backend}
+  spec.summary       = %q{Hiera AWS Backend}
   spec.homepage      = ""
   spec.license       = "MIT"
 
