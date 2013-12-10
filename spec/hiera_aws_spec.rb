@@ -26,9 +26,21 @@ module Hiera
         backend.lookup("some_key", {}, "", :priority)
       end
 
-      it "properly extracts service parameters from hierarchy" do
-        Backend.stub(:datasources).and_yield "aws/elasticache/wurstbrot"
-        Aws::ElastiCache.any_instance.should_receive(:lookup).with("some_key", "wurstbrot")
+      it "properly passes *no* hierarchy parameters to service" do
+        Backend.stub(:datasources).and_yield "aws/elasticache"
+        Aws::ElastiCache.any_instance.should_receive(:lookup).with("some_key", [])
+        backend.lookup("some_key", {}, "", :priority)
+      end
+
+      it "properly passes one hierarchy parameter to service" do
+        Backend.stub(:datasources).and_yield "aws/elasticache/param1"
+        Aws::ElastiCache.any_instance.should_receive(:lookup).with("some_key", ["param1"])
+        backend.lookup("some_key", {}, "", :priority)
+      end
+
+      it "properly passes multiple hierarchy parameters to service" do
+        Backend.stub(:datasources).and_yield "aws/elasticache/param1/param2/param3"
+        Aws::ElastiCache.any_instance.should_receive(:lookup).with("some_key", ["param1", "param2", "param3"])
         backend.lookup("some_key", {}, "", :priority)
       end
     end

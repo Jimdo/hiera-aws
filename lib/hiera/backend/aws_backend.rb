@@ -20,7 +20,7 @@ module Hiera
           next unless elements[0] == "aws"
 
           service = elements[1]
-          params = elements[2]
+          params = elements[2..-1]
 
           service_class = case service
                           when "elasticache"
