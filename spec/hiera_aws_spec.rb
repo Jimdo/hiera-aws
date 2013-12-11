@@ -1,7 +1,7 @@
 require "rspec"
 require "hiera/backend/aws_backend"
 
-module Hiera
+class Hiera
   module Backend
     describe "Aws_Backend" do
       let(:backend) { Aws_backend.new }

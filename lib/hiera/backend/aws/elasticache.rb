@@ -1,6 +1,6 @@
 require 'aws-sdk'
 
-module Hiera
+class Hiera
   module Backend
     module Aws
       class NoHandlerError < StandardError; end

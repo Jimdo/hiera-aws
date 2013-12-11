@@ -1,6 +1,6 @@
 require "hiera/backend/aws/elasticache"
 
-module Hiera
+class Hiera
   module Backend
     class Aws_backend
       def initialize
