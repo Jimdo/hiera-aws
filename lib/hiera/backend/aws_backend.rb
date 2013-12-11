@@ -20,7 +20,6 @@ module Hiera
           next unless elements[0] == "aws"
 
           service = elements[1]
-          params = elements[2..-1]
 
           service_class = case service
                           when "elasticache"
@@ -28,7 +27,7 @@ module Hiera
                           end
           next if service_class.nil?
 
-          value = service_class.lookup(key, params)
+          value = service_class.lookup(key, scope)
           next if value.nil?
 
           # this only supports resolution_type => :priority at the moment.
