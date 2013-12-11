@@ -37,14 +37,14 @@ class Hiera
 
         it "properly maps keys to methods and calls those" do
           scope = {"foo" => "bar"}
-          elasticache.should_receive(:cache_nodes_by_cache_cluster_id).with(scope)
+          elasticache.should_receive(:cache_nodes_by_cache_cluster_id)
           elasticache.lookup("cache_nodes_by_cache_cluster_id", scope)
         end
 
         context "#cache_nodes_by_cache_cluster_id" do
           it "raises an exception when called without cache_cluster_id set" do
             expect do
-              elasticache.cache_nodes_by_cache_cluster_id({})
+              elasticache.cache_nodes_by_cache_cluster_id
             end.to raise_error Aws::MissingFactError
           end
 
@@ -60,9 +60,12 @@ class Hiera
             }
             options = { :cache_cluster_id => cluster_id, :show_cache_node_info => true }
 
-            elasticache.client.stub(:describe_cache_clusters).
-              with(options).and_return(cluster_info)
-            elasticache.cache_nodes_by_cache_cluster_id("cache_cluster_id" => cluster_id).
+            client = double
+            client.stub(:describe_cache_clusters).with(options).and_return(cluster_info)
+            elasticache.stub(:client).and_return(client)
+
+            elasticache.instance_variable_set("@scope", { "cache_cluster_id" => cluster_id })
+            elasticache.cache_nodes_by_cache_cluster_id.
               should eq ["1.2.3.4:1234", "5.6.7.8:5678"]
           end
         end
