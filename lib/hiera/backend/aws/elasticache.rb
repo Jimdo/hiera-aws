@@ -1,28 +1,12 @@
-require 'aws-sdk'
+require 'hiera/backend/aws/base'
 
 class Hiera
   module Backend
     module Aws
-      class NoHandlerError < StandardError; end
-      class MissingFactError < StandardError; end
-
-      class ElastiCache
-        def initialize
-          @scope = {}
-        end
-
+      class ElastiCache < Base
         def client
           region = @scope.fetch("location", "eu-west-1")
           AWS::ElastiCache::Client.new :region => region
-        end
-
-        def lookup(key, scope)
-          if respond_to? key
-            @scope = scope
-            send(key)
-          else
-            raise NoHandlerError, "no handler for '#{key}' found."
-          end
         end
 
         def cache_nodes_by_cache_cluster_id
