@@ -1,4 +1,5 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-# Specify your gem's dependencies in hiera-aws.gemspec
 gemspec
+
+gem "nokogiri", "1.5.10"
