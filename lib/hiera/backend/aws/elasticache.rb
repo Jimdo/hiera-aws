@@ -5,7 +5,7 @@ class Hiera
     module Aws
       class ElastiCache < Base
         def client
-          region = scope.fetch("location", "eu-west-1")
+          region = scope["location"] || "eu-west-1"
           AWS::ElastiCache::Client.new :region => region
         end
 
