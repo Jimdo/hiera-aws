@@ -13,7 +13,7 @@ class Hiera
         end
 
         it "properly maps key to method and calls it" do
-          service.should_receive(:some_key)
+          expect(service).to receive :some_key
           service.lookup("some_key", {})
         end
 
@@ -21,7 +21,7 @@ class Hiera
           scope = { "foo" => "bar" }
           service.stub(:some_key)
           service.lookup("some_key", scope)
-          service.scope.should == scope
+          expect(scope).to eq scope
         end
       end
     end

@@ -26,7 +26,7 @@ class Hiera
 
         it "properly forwards lookup to ElastiCache service" do
           Backend.stub(:datasources).and_yield "aws/elasticache"
-          Aws::ElastiCache.any_instance.should_receive(:lookup).with(key, scope)
+          expect_any_instance_of(Aws::ElastiCache).to receive(:lookup).with(key, scope)
           backend.lookup(*params)
         end
       end
