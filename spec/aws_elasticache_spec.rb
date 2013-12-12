@@ -5,19 +5,7 @@ class Hiera
     describe Aws::ElastiCache do
       let(:elasticache) { Aws::ElastiCache.new  }
 
-      it "raises an exception when called with unhandled key" do
-        expect do
-          elasticache.lookup("key_with_no_matching_method", {})
-        end.to raise_error Aws::NoHandlerError
-      end
-
-      it "properly maps keys to methods and calls those" do
-        scope = {"foo" => "bar"}
-        elasticache.should_receive(:cache_nodes_by_cache_cluster_id)
-        elasticache.lookup("cache_nodes_by_cache_cluster_id", scope)
-      end
-
-      context "#cache_nodes_by_cache_cluster_id" do
+      describe "#cache_nodes_by_cache_cluster_id" do
         it "raises an exception when called without cache_cluster_id set" do
           expect do
             elasticache.cache_nodes_by_cache_cluster_id

@@ -1,4 +1,4 @@
-require 'hiera/backend/aws/base'
+require "hiera/backend/aws/base"
 
 class Hiera
   module Backend
