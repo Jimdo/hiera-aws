@@ -1,24 +1,56 @@
 # Hiera AWS Backend
 
-TODO: Write a gem description
+This backend for [Hiera] allows you to retrieve information from AWS that you
+can use in your Puppet code at runtime. For example, you can ask the backend to
+get a list of all nodes part of a specific ElastiCache cluster.
+
+This project was inspired by the [hiera-cloudformation] backend.
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-    gem "hiera-aws"
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
+You can install the gem this way:
 
     $ gem install hiera-aws
 
 ## Usage
 
-TODO: Write usage instructions here
+First, add the backend to the list of backends in `hiera.yaml`:
+
+```yaml
+---
+:backends:
+  - yaml
+  - aws
+```
+
+Next, add `aws/elasticache` to the hierarchy. ElastiCache is the only AWS
+service currently supported by this backend.
+
+```yaml
+:hierarchy:
+  - aws/elasticache
+```
+
+Last but not least, make sure to grant all EC2 instances sufficient privileges
+for Hiera to work, i.e. assign an IAM Role that allows the action
+`elasticache:Describe*`.
+
+## Hiera Keys
+
+The backend currently supports the following keys that you can pass to the
+`hiera()` function to look up objects in AWS.
+
+### cache_nodes_by_cache_cluster_id
+
+Returns an array of all nodes part of a ElastiCache cluster. The cluster is
+identified by its physical ID which must be passed to the backend via the Puppet
+fact `$cache_cluster_id`.
+
+```
+$cache_cluster_id = "your_cluster_id"
+
+cluster_nodes = hiera("cache_nodes_by_cache_cluster_id")
+```
 
 ## License and Authors
 
@@ -48,3 +80,7 @@ We welcome contributed improvements and bug fixes via the usual workflow:
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new pull request
+
+
+[Hiera]: http://docs.puppetlabs.com/hiera/1/puppet.html
+[hiera-cloudformation]: https://github.com/fanduel/hiera-cloudformation
