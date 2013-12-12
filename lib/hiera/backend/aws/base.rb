@@ -5,9 +5,11 @@ class Hiera
       class MissingFactError < StandardError; end
 
       class Base
-        def initialize
-          @scope = {}
+        def initialize(scope={})
+          @scope = scope
         end
+
+        attr_reader :scope
 
         def lookup(key, scope)
           if respond_to? key

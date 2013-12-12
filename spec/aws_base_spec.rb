@@ -21,7 +21,7 @@ class Hiera
           scope = { "foo" => "bar" }
           service.stub(:some_key)
           service.lookup("some_key", scope)
-          service.instance_variable_get("@scope").should eq scope
+          service.scope.should eq scope
         end
       end
     end
