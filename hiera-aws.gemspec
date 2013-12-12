@@ -1,7 +1,7 @@
 # coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'hiera/backend/aws/version'
+require "hiera/backend/aws/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "hiera-aws"
@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.email         = ["mathias.lafeldt@jimdo.com", "deniz.adrian@jimdo.com"]
   spec.description   = %q{Hiera AWS Backend}
   spec.summary       = %q{Hiera AWS Backend}
-  spec.homepage      = ""
-  spec.license       = "MIT"
+  spec.homepage      = "https://github.com/Jimdo/hiera-aws"
+  spec.license       = "Apache 2.0"
 
   spec.files         = `git ls-files`.split($/)
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
