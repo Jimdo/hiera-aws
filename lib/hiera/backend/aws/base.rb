@@ -1,3 +1,5 @@
+require "aws-sdk"
+
 class Hiera
   module Backend
     module Aws
