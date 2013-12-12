@@ -13,9 +13,15 @@ class Hiera
         end
 
         it "properly maps key to method and calls it" do
-          scope = {"foo" => "bar"}
           service.should_receive(:some_key)
+          service.lookup("some_key", {})
+        end
+
+        it "properly stores the scope (Puppet facts)" do
+          scope = { "foo" => "bar" }
+          service.stub(:some_key)
           service.lookup("some_key", scope)
+          service.instance_variable_get("@scope").should eq scope
         end
       end
     end
