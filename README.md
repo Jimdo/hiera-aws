@@ -44,7 +44,8 @@ The backend currently supports the following keys that you can pass to the
 
 Returns an array of all nodes part of a ElastiCache cluster. The cluster is
 identified by its physical ID which must be passed to the backend via the Puppet
-fact `$cache_cluster_id`.
+fact `$cache_cluster_id`. The returned array has the format `["host1:port",
+"host2:port"]`.
 
 ```
 $cache_cluster_id = "your_cluster_id"
