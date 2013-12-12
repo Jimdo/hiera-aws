@@ -1,5 +1,7 @@
 # Hiera AWS Backend
 
+[![Build Status](https://travis-ci.org/Jimdo/hiera-aws.png?branch=master)](https://travis-ci.org/Jimdo/hiera-aws)
+
 This backend for [Hiera] allows you to retrieve information from AWS that you
 can use in your Puppet code at runtime. For example, you can ask the backend to
 get a list of all nodes part of a specific ElastiCache cluster.
