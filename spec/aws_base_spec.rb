@@ -6,10 +6,9 @@ class Hiera
       let(:service) { Aws::Base.new  }
 
       describe "#lookup" do
-        it "raises an exception when called with unhandled key" do
-          expect do
-            service.lookup("key_with_no_matching_method", {})
-          end.to raise_error Aws::NoHandlerError
+        it "returns nil if key is unknown since Hiera iterates over all configured backends" do
+          value = service.lookup("key_with_no_matching_method", {})
+          expect(value).to be_nil
         end
 
         it "properly maps key to method and calls it" do
