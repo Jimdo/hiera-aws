@@ -6,7 +6,7 @@ class Hiera
       let(:service) { Aws::Base.new  }
 
       describe "#lookup" do
-        it "returns nil if key is unknown" do
+        it "returns nil if key is unknown since Hiera iterates over all configured backends" do
           value = service.lookup("key_with_no_matching_method", {})
           expect(value).to be_nil
         end
