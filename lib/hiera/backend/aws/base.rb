@@ -3,7 +3,6 @@ require "aws-sdk"
 class Hiera
   module Backend
     module Aws
-      class NoHandlerError < StandardError; end
       class MissingFactError < StandardError; end
 
       class Base
@@ -18,7 +17,8 @@ class Hiera
             @scope = scope
             send(key)
           else
-            raise NoHandlerError, "no handler for '#{key}' found."
+            # Found no handler for key
+            nil
           end
         end
       end
