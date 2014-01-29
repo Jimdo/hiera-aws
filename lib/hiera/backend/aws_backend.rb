@@ -11,7 +11,25 @@ class Hiera
           require "aws-sdk"
         end
 
+        setup_aws_credentials
+
         Hiera.debug("AWS backend initialized")
+      end
+
+      def setup_aws_credentials
+        if Config.include?(:aws) && !Config[:aws].nil? &&
+          Config[:aws].include?(:access_key_id) &&
+          Config[:aws].include?(:secret_access_key)
+
+          Hiera.debug("Using AWS credentials from backend configuration")
+
+          AWS.config({
+            :access_key_id     => Config[:aws][:access_key_id],
+            :secret_access_key => Config[:aws][:secret_access_key]
+          })
+        else
+          Hiera.debug("Using AWS credentials from environment or IAM role")
+        end
       end
 
       def lookup(key, scope, order_override, resolution_type)
