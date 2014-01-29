@@ -17,10 +17,7 @@ class Hiera
       end
 
       def setup_aws_credentials
-        if Config.include?(:aws) && !Config[:aws].nil? &&
-          Config[:aws].include?(:access_key_id) &&
-          Config[:aws].include?(:secret_access_key)
-
+        if Config[:aws] && Config[:aws][:access_key_id] && Config[:aws][:secret_access_key]
           Hiera.debug("Using AWS credentials from backend configuration")
 
           AWS.config({

@@ -9,8 +9,7 @@ class Hiera
 
       describe "#initialize" do
         it "uses AWS credentials from environment or IAM role by default" do
-          Config.stub(:include?).with(:aws).and_return(false)
-
+          Config.stub(:[]).with(:aws)
           expect(AWS).to_not receive(:config)
           Aws_backend.new
         end
@@ -21,9 +20,7 @@ class Hiera
             :secret_access_key => "some_secret_access_key"
           }
 
-          Config.stub(:include?).with(:aws).and_return(true)
           Config.stub(:[]).with(:aws).and_return(credentials)
-
           expect(AWS).to receive(:config).with(credentials)
           Aws_backend.new
         end
@@ -36,7 +33,7 @@ class Hiera
         let(:params) { [key, scope, "", :priority] }
 
         before do
-          Config.stub(:include?).with(:aws).and_return(false)
+          Config.stub(:[]).with(:aws)
         end
 
         it "returns nil if hierarchy is empty" do
