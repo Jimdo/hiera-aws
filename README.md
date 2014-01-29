@@ -33,8 +33,8 @@ service currently supported by this backend.
   - aws/elasticache
 ```
 
-To grant all EC2 instances sufficient privileges for Hiera to work, you either
-have to assign an IAM role that allows the action `elasticache:Describe*`
+To grant sufficient privileges for Hiera to work, you either have to assign the
+EC2 instances an IAM role that allows the action `elasticache:Describe*`
 (preferred) or provide credentials for a user with the same privileges via the
 backend configuration in `hiera.yml`:
 
