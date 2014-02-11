@@ -27,11 +27,34 @@ class Hiera
           }]
         }
       )}
+      let(:ec2_client) { double(
+        :instances => {
+          "some-ec2-instance-id" => double(
+            :tags => { "aws:cloudformation:stack-name" => "some-stack-name" }
+          )
+        }
+      )}
+      let(:cfn_client) { double(
+        :stacks => {
+          "some-stack-name" => double(
+            :resources => [
+              double(
+                :resource_type => "AWS::ElastiCache::CacheCluster",
+                :physical_resource_id => "some-cluster-id"
+              )
+            ]
+          )
+        }
+      )}
+
+      before do
+        AWS::EC2.stub(:new => ec2_client)
+        AWS::CloudFormation.stub(:new => cfn_client)
+      end
 
       describe "#cache_nodes_by_cache_cluster_id" do
         it "raises an exception when called without cache_cluster_id set" do
-          scope = {}
-          elasticache = Aws::ElastiCache.new scope
+          elasticache = Aws::ElastiCache.new
           expect do
             elasticache.cache_nodes_by_cache_cluster_id
           end.to raise_error Aws::MissingFactError
@@ -47,36 +70,13 @@ class Hiera
 
       describe "#redis_cluster_nodes_for_cfn_stack" do
         it "raises an exception when ec2_instance_id fact is missing" do
-          scope = {}
-          elasticache = Aws::ElastiCache.new scope
+          elasticache = Aws::ElastiCache.new
           expect do
             elasticache.redis_cluster_nodes_for_cfn_stack
           end.to raise_error Aws::MissingFactError
         end
 
         it "returns all Redis cluster nodes for CloudFormation stack of EC2 instance" do
-          ec2_client = double(
-            :instances => {
-              "some-ec2-instance-id" => double(
-                :tags => { "aws:cloudformation:stack-name" => "some-stack-name" }
-              )
-          })
-          AWS::EC2.stub(:new => ec2_client)
-
-          cfn_client = double(
-            :stacks => {
-              "some-stack-name" => double(
-                :resources => [
-                  double(
-                    :resource_type => "AWS::ElastiCache::CacheCluster",
-                    :physical_resource_id => "some-cluster-id"
-                  )
-                ]
-              )
-            }
-          )
-          AWS::CloudFormation.stub(:new => cfn_client)
-
           scope = { "ec2_instance_id" => "some-ec2-instance-id" }
           elasticache = Aws::ElastiCache.new scope
           AWS::ElastiCache::Client.stub(:new => ec_redis_client)
@@ -86,36 +86,13 @@ class Hiera
 
       describe "#memcached_cluster_nodes_for_cfn_stack" do
         it "raises an exception when ec2_instance_id fact is missing" do
-          scope = {}
-          elasticache = Aws::ElastiCache.new scope
+          elasticache = Aws::ElastiCache.new
           expect do
             elasticache.memcached_cluster_nodes_for_cfn_stack
           end.to raise_error Aws::MissingFactError
         end
 
         it "returns all Memcached cluster nodes for CloudFormation stack of EC2 instance" do
-          ec2_client = double(
-            :instances => {
-              "some-ec2-instance-id" => double(
-                :tags => { "aws:cloudformation:stack-name" => "some-stack-name" }
-              )
-          })
-          AWS::EC2.stub(:new => ec2_client)
-
-          cfn_client = double(
-            :stacks => {
-              "some-stack-name" => double(
-                :resources => [
-                  double(
-                    :resource_type => "AWS::ElastiCache::CacheCluster",
-                    :physical_resource_id => "some-cluster-id"
-                  )
-                ]
-              )
-            }
-          )
-          AWS::CloudFormation.stub(:new => cfn_client)
-
           scope = { "ec2_instance_id" => "some-ec2-instance-id" }
           elasticache = Aws::ElastiCache.new scope
           AWS::ElastiCache::Client.stub(:new => ec_memcached_client)
