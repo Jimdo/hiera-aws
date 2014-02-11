@@ -4,12 +4,10 @@ class Hiera
   module Backend
     module Aws
       class ElastiCache < Base
-        def client
-          region = scope["location"] || "eu-west-1"
-          AWS::ElastiCache::Client.new :region => region
-        end
-
         def cache_nodes_by_cache_cluster_id
+          region = scope["location"] || "eu-west-1"
+          client = AWS::ElastiCache::Client.new :region => region
+
           cache_cluster_id = scope["cache_cluster_id"]
           raise MissingFactError, "cache_cluster_id not found" unless cache_cluster_id
           options = { :cache_cluster_id => cache_cluster_id, :show_cache_node_info => true }
@@ -17,21 +15,30 @@ class Hiera
           nodes.map { |node| "#{node[:endpoint][:address]}:#{node[:endpoint][:port]}" }
         end
 
+        #
+        # XXX: Lots of spiked code ahead that MUST be refactored.
+        #
         def cfn_stack_name(instance_id)
-          client = AWS::EC2.new
+          region = scope["location"] || "eu-west-1"
+          client = AWS::EC2.new :region => region
+
           instances = client.instances[instance_id]
           instances.tags["aws:cloudformation:stack-name"]
         end
 
         def cache_cluster_info(cluster_id)
-          client = AWS::ElastiCache::Client.new
+          region = scope["location"] || "eu-west-1"
+          client = AWS::ElastiCache::Client.new :region => region
+
           options = { :cache_cluster_id => cluster_id, :show_cache_node_info => true }
           info = client.describe_cache_clusters(options)
           info.fetch(:cache_clusters).first
         end
 
         def cache_clusters_in_cfn_stack(stack_name, cluster_engine=nil)
-          client = AWS::CloudFormation.new
+          region = scope["location"] || "eu-west-1"
+          client = AWS::CloudFormation.new :region => region
+
           stack = client.stacks[stack_name]
           stack.resources.select do |r|
             r.resource_type == "AWS::ElastiCache::CacheCluster"

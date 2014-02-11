@@ -3,28 +3,6 @@ require "hiera/backend/aws/elasticache"
 class Hiera
   module Backend
     describe Aws::ElastiCache do
-      describe "#client" do
-        it "returns an instance of AWS::ElastiCache::Client" do
-          elasticache = Aws::ElastiCache.new
-          client = double
-          AWS::ElastiCache::Client.stub(:new => client)
-          expect(elasticache.client).to eq client
-        end
-
-        it "configures the default AWS region eu-west-1" do
-          elasticache = Aws::ElastiCache.new
-          expect(AWS::ElastiCache::Client).to receive(:new).with(:region => "eu-west-1")
-          elasticache.client
-        end
-
-        it "configures a custom AWS region passed via 'location' fact" do
-          scope = { "location" => "some-aws-region" }
-          elasticache = Aws::ElastiCache.new scope
-          expect(AWS::ElastiCache::Client).to receive(:new).with(:region => "some-aws-region")
-          elasticache.client
-        end
-      end
-
       describe "#cache_nodes_by_cache_cluster_id" do
         it "raises an exception when called without cache_cluster_id set" do
           scope = {}
