@@ -3,6 +3,31 @@ require "hiera/backend/aws/elasticache"
 class Hiera
   module Backend
     describe Aws::ElastiCache do
+      let(:ec_redis_client) { double(
+        :describe_cache_clusters => {
+          :cache_clusters => [{
+            :cache_nodes => [
+              { :endpoint => { :address => "1.1.1.1", :port => 1234 } },
+              { :endpoint => { :address => "2.2.2.2", :port => 1234 } },
+
+            ],
+            :engine => "redis"
+          }]
+        }
+      )}
+      let(:ec_memcached_client) { double(
+        :describe_cache_clusters => {
+          :cache_clusters => [{
+            :cache_nodes => [
+              { :endpoint => { :address => "3.3.3.3", :port => 5678 } },
+              { :endpoint => { :address => "4.4.4.4", :port => 5678 } },
+
+            ],
+            :engine => "memcached"
+          }]
+        }
+      )}
+
       describe "#cache_nodes_by_cache_cluster_id" do
         it "raises an exception when called without cache_cluster_id set" do
           scope = {}
@@ -15,22 +40,8 @@ class Hiera
         it "returns all nodes in cache cluster" do
           scope = { "cache_cluster_id" => "some-cluster-id" }
           elasticache = Aws::ElastiCache.new scope
-
-          ec_client = double(
-            :describe_cache_clusters => {
-              :cache_clusters => [{
-                :cache_nodes => [
-                  { :endpoint => { :address => "1.2.3.4", :port => 1234 } },
-                  { :endpoint => { :address => "5.6.7.8", :port => 5678 } },
-
-                ],
-                :engine => "redis"
-              }]
-            }
-          )
-          AWS::ElastiCache::Client.stub(:new => ec_client)
-
-          expect(elasticache.cache_nodes_by_cache_cluster_id).to eq ["1.2.3.4:1234", "5.6.7.8:5678"]
+          AWS::ElastiCache::Client.stub(:new => ec_redis_client)
+          expect(elasticache.cache_nodes_by_cache_cluster_id).to eq ["1.1.1.1:1234", "2.2.2.2:1234"]
         end
       end
 
@@ -66,22 +77,10 @@ class Hiera
           )
           AWS::CloudFormation.stub(:new => cfn_client)
 
-          ec_client = double(
-            :describe_cache_clusters => {
-              :cache_clusters => [{
-                :cache_nodes => [
-                  { :endpoint => { :address => "1.2.3.4" } },
-                  { :endpoint => { :address => "5.6.7.8" } },
-                ],
-                :engine => "redis"
-              }]
-            }
-          )
-          AWS::ElastiCache::Client.stub(:new => ec_client)
-
           scope = { "ec2_instance_id" => "some-ec2-instance-id" }
           elasticache = Aws::ElastiCache.new scope
-          expect(elasticache.redis_cluster_nodes_for_cfn_stack).to eq ["1.2.3.4", "5.6.7.8"]
+          AWS::ElastiCache::Client.stub(:new => ec_redis_client)
+          expect(elasticache.redis_cluster_nodes_for_cfn_stack).to eq ["1.1.1.1", "2.2.2.2"]
         end
       end
 
@@ -117,22 +116,10 @@ class Hiera
           )
           AWS::CloudFormation.stub(:new => cfn_client)
 
-          ec_client = double(
-            :describe_cache_clusters => {
-              :cache_clusters => [{
-                :cache_nodes => [
-                  { :endpoint => { :address => "1.2.3.4" } },
-                  { :endpoint => { :address => "5.6.7.8" } },
-                ],
-                :engine => "memcached"
-              }]
-            }
-          )
-          AWS::ElastiCache::Client.stub(:new => ec_client)
-
           scope = { "ec2_instance_id" => "some-ec2-instance-id" }
           elasticache = Aws::ElastiCache.new scope
-          expect(elasticache.memcached_cluster_nodes_for_cfn_stack).to eq ["1.2.3.4", "5.6.7.8"]
+          AWS::ElastiCache::Client.stub(:new => ec_memcached_client)
+          expect(elasticache.memcached_cluster_nodes_for_cfn_stack).to eq ["3.3.3.3", "4.4.4.4"]
         end
       end
     end
