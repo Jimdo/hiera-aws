@@ -1,7 +1,7 @@
 require "hiera/backend/aws/base"
 
 class Hiera
-  module Backend
+  module Backend # rubocop:disable Documentation
     describe Aws::Base do
       let(:service) { Aws::Base.new  }
 

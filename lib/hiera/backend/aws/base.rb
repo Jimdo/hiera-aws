@@ -5,8 +5,9 @@ class Hiera
     module Aws
       class MissingFactError < StandardError; end
 
+      # Base class for all AWS service classes
       class Base
-        def initialize(scope={})
+        def initialize(scope = {})
           @scope = scope
         end
 
