@@ -3,6 +3,7 @@ require "hiera/backend/aws/base"
 class Hiera
   module Backend
     module Aws
+      # Implementation of Hiera keys for aws/elasticache
       class ElastiCache < Base
         def cache_nodes_by_cache_cluster_id
           region = scope["location"] || "eu-west-1"
@@ -35,7 +36,8 @@ class Hiera
           info.fetch(:cache_clusters).first
         end
 
-        def cache_clusters_in_cfn_stack(stack_name, cluster_engine=nil)
+        # rubocop:disable MultilineBlockChain
+        def cache_clusters_in_cfn_stack(stack_name, cluster_engine = nil)
           region = scope["location"] || "eu-west-1"
           client = AWS::CloudFormation.new :region => region
 
@@ -54,8 +56,9 @@ class Hiera
             end
           end
         end
+        # rubocop:enable MultilineBlockChain
 
-        def cluster_nodes_for_cfn_stack(cluster_engine=nil)
+        def cluster_nodes_for_cfn_stack(cluster_engine = nil)
           ec2_instance_id = scope["ec2_instance_id"]
           raise MissingFactError, "ec2_instance_id not found" unless ec2_instance_id
 

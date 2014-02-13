@@ -1,51 +1,59 @@
 require "hiera/backend/aws/elasticache"
 
 class Hiera
-  module Backend
+  module Backend # rubocop:disable Documentation
     describe Aws::ElastiCache do
-      let(:ec_redis_client) { double(
-        :describe_cache_clusters => {
-          :cache_clusters => [{
-            :cache_nodes => [
-              { :endpoint => { :address => "1.1.1.1", :port => 1234 } },
-              { :endpoint => { :address => "2.2.2.2", :port => 1234 } },
+      let(:ec_redis_client) do
+        double(
+          :describe_cache_clusters => {
+            :cache_clusters => [{
+              :cache_nodes => [
+                { :endpoint => { :address => "1.1.1.1", :port => 1234 } },
+                { :endpoint => { :address => "2.2.2.2", :port => 1234 } }
 
-            ],
-            :engine => "redis"
-          }]
-        }
-      )}
-      let(:ec_memcached_client) { double(
-        :describe_cache_clusters => {
-          :cache_clusters => [{
-            :cache_nodes => [
-              { :endpoint => { :address => "3.3.3.3", :port => 5678 } },
-              { :endpoint => { :address => "4.4.4.4", :port => 5678 } },
+              ],
+              :engine => "redis"
+            }]
+          }
+        )
+      end
+      let(:ec_memcached_client) do
+        double(
+          :describe_cache_clusters => {
+            :cache_clusters => [{
+              :cache_nodes => [
+                { :endpoint => { :address => "3.3.3.3", :port => 5678 } },
+                { :endpoint => { :address => "4.4.4.4", :port => 5678 } }
 
-            ],
-            :engine => "memcached"
-          }]
-        }
-      )}
-      let(:ec2_client) { double(
-        :instances => {
-          "some-ec2-instance-id" => double(
-            :tags => { "aws:cloudformation:stack-name" => "some-stack-name" }
-          )
-        }
-      )}
-      let(:cfn_client) { double(
-        :stacks => {
-          "some-stack-name" => double(
-            :resources => [
-              double(
-                :resource_type => "AWS::ElastiCache::CacheCluster",
-                :physical_resource_id => "some-cluster-id"
-              )
-            ]
-          )
-        }
-      )}
+              ],
+              :engine => "memcached"
+            }]
+          }
+        )
+      end
+      let(:ec2_client) do
+        double(
+          :instances => {
+            "some-ec2-instance-id" => double(
+              :tags => { "aws:cloudformation:stack-name" => "some-stack-name" }
+            )
+          }
+        )
+      end
+      let(:cfn_client) do
+        double(
+          :stacks => {
+            "some-stack-name" => double(
+              :resources => [
+                double(
+                  :resource_type => "AWS::ElastiCache::CacheCluster",
+                  :physical_resource_id => "some-cluster-id"
+                )
+              ]
+            )
+          }
+        )
+      end
 
       before do
         AWS::EC2.stub(:new => ec2_client)

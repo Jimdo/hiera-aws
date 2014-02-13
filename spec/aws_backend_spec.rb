@@ -1,7 +1,7 @@
 require "hiera/backend/aws_backend"
 
 class Hiera
-  module Backend
+  module Backend # rubocop:disable Documentation
     describe Aws_backend do
       before do
         Hiera.stub(:debug)
