@@ -11,6 +11,10 @@ class Hiera
           @scope = scope
         end
 
+        def aws_region
+          @scope["location"] || "eu-west-1"
+        end
+
         attr_reader :scope
 
         def lookup(key, scope)
