@@ -4,7 +4,6 @@ class Hiera
   module Backend
     module Aws
       class MissingFactError < StandardError; end
-      class InvalidKeyError < StandardError; end
 
       # Base class for all AWS service classes
       class Base
