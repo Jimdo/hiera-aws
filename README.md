@@ -25,25 +25,30 @@ First, add the backend to the list of backends in `hiera.yaml`:
   - aws
 ```
 
-Next, add `aws/elasticache` to the hierarchy. ElastiCache is the only AWS
-service currently supported by this backend.
+Next, add the AWS services supported by this backend to the hierarchy:
 
 ```yaml
 :hierarchy:
   - aws/elasticache
+  - aws/rds
 ```
 
-To grant sufficient privileges for Hiera to work, you either have to assign the
-EC2 instances an IAM role that allows the action `elasticache:Describe*`
-(preferred) or provide credentials for a user with the same privileges via the
-backend configuration in `hiera.yml`:
+The following AWS privileges are required for Hiera to work:
+
+- `AmazonEC2ReadOnlyAccess`
+- `AmazonElastiCacheReadOnlyAccess`
+- `AmazonRDSReadOnlyAccess`
+- `AWSCloudFormationReadOnlyAccess`
+
+To grant those privileges, you either have to assign the EC2 instances an IAM
+role (preferred) or provide credentials for a user with the same privileges via
+the backend configuration in `hiera.yml`:
 
 ```yaml
 :aws:
   :access_key_id: your_aws_access_key_id_here
   :secret_access_key: your_aws_secret_access_key_here
 ```
-
 
 ## Hiera Keys
 
@@ -87,6 +92,24 @@ Usage:
 
 ```
 cluster_nodes = hiera("memcached_cluster_nodes_for_cfn_stack")
+```
+
+### rds tag=value...
+
+Returns an array of all RDS database instances that have one or more tags. The
+returned array has the format `["host1", "host2"]`.
+
+Usage:
+
+```
+# Get all database instances
+rds_instances = hiera("rds")
+
+# Get all database instances that have a tag named "environment" with the value "dev"
+rds_instances = hiera("rds environment=dev")
+
+# Get all database instances that have two specific tags
+rds_instances = hiera("rds environment=production role=mgmt-db")
 ```
 
 ## License and Authors
