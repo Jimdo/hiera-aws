@@ -30,6 +30,8 @@ class Hiera
           end
         end
 
+        private
+
         def db_instances
           @db_instances ||= @client.describe_db_instances[:db_instances]
         end
@@ -40,8 +42,6 @@ class Hiera
             tags.all? { |k, v| tags[k] == all_tags[k] }
           end
         end
-
-        private
 
         def db_resource_name(db_instance_id)
           "arn:aws:rds:#{aws_region}:#{aws_account_number}:db:#{db_instance_id}"
