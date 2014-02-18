@@ -36,6 +36,19 @@ class Hiera
           expect(service.aws_region).to eq "some-aws-region"
         end
       end
+
+      describe "#aws_account_number" do
+        it "defaults to empty string" do
+          service = Aws::Base.new
+          expect(service.aws_account_number).to eq ""
+        end
+
+        it "can be set via Puppet fact" do
+          scope = { "aws_account_number" => "12345678" }
+          service = Aws::Base.new scope
+          expect(service.aws_account_number).to eq "12345678"
+        end
+      end
     end
   end
 end

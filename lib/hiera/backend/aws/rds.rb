@@ -5,8 +5,6 @@ class Hiera
     module Aws
       # Implementation of Hiera keys for aws/rds
       class RDS < Base
-        AWS_ACCOUNT_NUMBER = "12345678"
-
         def initialize(scope = {})
           super(scope)
           @client = AWS::RDS::Client.new :region => aws_region
@@ -17,7 +15,7 @@ class Hiera
         #  - hiera("rds environment=dev")
         #  - hiera("rds role=mgmt-db")
         #  - hiera("rds environment=production role=mgmt-db")
-        def lookup(key, scope = {})
+        def lookup(key, scope)
           r = super(key, scope)
           return r if r
 
@@ -46,7 +44,7 @@ class Hiera
         private
 
         def db_resource_name(db_instance_id)
-          "arn:aws:rds:#{aws_region}:#{AWS_ACCOUNT_NUMBER}:db:#{db_instance_id}"
+          "arn:aws:rds:#{aws_region}:#{aws_account_number}:db:#{db_instance_id}"
         end
 
         def db_instance_tags(db_instance_id)

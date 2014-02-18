@@ -49,22 +49,24 @@ class Hiera
 
       before do
         AWS::RDS::Client.stub(:new => rds_client)
-        rds_client.stub(:list_tags_for_resource) { |options| rds_tags[options[:resource_name]] }
+        rds_client.stub(:list_tags_for_resource) { |options| rds_tags.fetch(options[:resource_name]) }
       end
 
       describe "#lookup" do
+        let(:scope) { { "aws_account_number" => "12345678" } }
+
         it "returns nil if Hiera key is unknown" do
-          expect(rds.lookup("doge")).to be_nil
+          expect(rds.lookup("doge", scope)).to be_nil
         end
 
         it "returns all database instances if no tags are provided" do
-          expect(rds.lookup("rds")).to eq ["db1.eu-west-1.rds.amazonaws.com", "db2.eu-west-1.rds.amazonaws.com", "db3.eu-west-1.rds.amazonaws.com"]
+          expect(rds.lookup("rds", scope)).to eq ["db1.eu-west-1.rds.amazonaws.com", "db2.eu-west-1.rds.amazonaws.com", "db3.eu-west-1.rds.amazonaws.com"]
         end
 
         it "returns database instances with specific tags" do
-          expect(rds.lookup("rds role=mgmt-db")).to eq ["db2.eu-west-1.rds.amazonaws.com", "db3.eu-west-1.rds.amazonaws.com"]
-          expect(rds.lookup("rds environment=dev")).to eq ["db1.eu-west-1.rds.amazonaws.com", "db2.eu-west-1.rds.amazonaws.com"]
-          expect(rds.lookup("rds environment=production role=mgmt-db")).to eq ["db3.eu-west-1.rds.amazonaws.com"]
+          expect(rds.lookup("rds role=mgmt-db", scope)).to eq ["db2.eu-west-1.rds.amazonaws.com", "db3.eu-west-1.rds.amazonaws.com"]
+          expect(rds.lookup("rds environment=dev", scope)).to eq ["db1.eu-west-1.rds.amazonaws.com", "db2.eu-west-1.rds.amazonaws.com"]
+          expect(rds.lookup("rds environment=production role=mgmt-db", scope)).to eq ["db3.eu-west-1.rds.amazonaws.com"]
         end
       end
     end
