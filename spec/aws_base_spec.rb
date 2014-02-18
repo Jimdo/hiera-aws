@@ -38,14 +38,17 @@ class Hiera
       end
 
       describe "#aws_account_number" do
-        it "defaults to empty string" do
-          service = Aws::Base.new
-          expect(service.aws_account_number).to eq ""
-        end
-
         it "can be set via Puppet fact" do
           scope = { "aws_account_number" => "12345678" }
           service = Aws::Base.new scope
+          expect(service.aws_account_number).to eq "12345678"
+        end
+
+        it "is retrieved from AWS when Puppet fact is not set" do
+          AWS::IAM.any_instance.stub(
+            :users => [double(:arn => "arn:aws:iam::12345678:user/some-user")]
+          )
+          service = Aws::Base.new
           expect(service.aws_account_number).to eq "12345678"
         end
       end

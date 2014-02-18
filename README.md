@@ -39,6 +39,7 @@ The following AWS privileges are required for Hiera to work:
 - `AmazonElastiCacheReadOnlyAccess`
 - `AmazonRDSReadOnlyAccess`
 - `AWSCloudFormationReadOnlyAccess`
+- `IAMReadOnlyAccess`
 
 To grant those privileges, you either have to assign the EC2 instances an IAM
 role (preferred) or provide credentials for a user with the same privileges via

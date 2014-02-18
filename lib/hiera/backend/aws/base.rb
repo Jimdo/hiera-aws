@@ -16,7 +16,8 @@ class Hiera
         end
 
         def aws_account_number
-          @scope["aws_account_number"] || ""
+          @scope["aws_account_number"] ||
+            AWS::IAM.new.users.first.arn.split(":")[4]
         end
 
         attr_reader :scope
