@@ -15,11 +15,16 @@ class Hiera
           @scope["location"] || "eu-west-1"
         end
 
+        def aws_account_number
+          @scope["aws_account_number"] ||
+            AWS::IAM.new.users.first.arn.split(":")[4]
+        end
+
         attr_reader :scope
 
         def lookup(key, scope)
+          @scope = scope
           if respond_to? key
-            @scope = scope
             send(key)
           else
             # Found no handler for key

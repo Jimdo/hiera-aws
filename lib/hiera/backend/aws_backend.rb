@@ -1,4 +1,5 @@
 require "hiera/backend/aws/elasticache"
+require "hiera/backend/aws/rds"
 
 class Hiera
   module Backend
@@ -30,7 +31,7 @@ class Hiera
         end
       end
 
-      def lookup(key, scope, order_override, resolution_type)
+      def lookup(key, scope, order_override, resolution_type) # rubocop:disable CyclomaticComplexity
         Backend.datasources(scope, order_override) do |elem|
           elements = elem.split "/"
           next unless elements[0] == "aws"
@@ -40,6 +41,8 @@ class Hiera
           service_class = case service
                           when "elasticache"
                             Hiera::Backend::Aws::ElastiCache.new
+                          when "rds"
+                            Hiera::Backend::Aws::RDS.new
                           end
           next if service_class.nil?
 

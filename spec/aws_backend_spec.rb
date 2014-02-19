@@ -51,6 +51,12 @@ class Hiera
           expect_any_instance_of(Aws::ElastiCache).to receive(:lookup).with(key, scope)
           backend.lookup(*params)
         end
+
+        it "properly forwards lookup to RDS service" do
+          Backend.stub(:datasources).and_yield "aws/rds"
+          expect_any_instance_of(Aws::RDS).to receive(:lookup).with(key, scope)
+          backend.lookup(*params)
+        end
       end
     end
   end
