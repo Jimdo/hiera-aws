@@ -4,25 +4,23 @@ class Hiera
   module Backend # rubocop:disable Documentation
     describe Aws::RDS do
       let(:rds) { Aws::RDS.new }
-      let(:rds_client) do
-        double(
-          :describe_db_instances => {
-            :db_instances => [
-              {
-                :db_instance_identifier => "db1",
-                :endpoint => { :address => "db1.eu-west-1.rds.amazonaws.com" }
-              },
-              {
-                :db_instance_identifier => "db2",
-                :endpoint => { :address => "db2.eu-west-1.rds.amazonaws.com" }
-              },
-              {
-                :db_instance_identifier => "db3",
-                :endpoint => { :address => "db3.eu-west-1.rds.amazonaws.com" }
-              }
-            ]
-          }
-        )
+      let(:rds_instances) do
+        {
+          :db_instances => [
+            {
+              :db_instance_identifier => "db1",
+              :endpoint => { :address => "db1.eu-west-1.rds.amazonaws.com" }
+            },
+            {
+              :db_instance_identifier => "db2",
+              :endpoint => { :address => "db2.eu-west-1.rds.amazonaws.com" }
+            },
+            {
+              :db_instance_identifier => "db3",
+              :endpoint => { :address => "db3.eu-west-1.rds.amazonaws.com" }
+            }
+          ]
+        }
       end
       let(:rds_tags) do
         {
@@ -47,8 +45,12 @@ class Hiera
       end
 
       before do
-        AWS::RDS::Client.stub(:new => rds_client)
-        rds_client.stub(:list_tags_for_resource) { |options| rds_tags.fetch(options[:resource_name]) }
+        rds_client = double
+        AWS::RDS::Client.stub(:new).and_return(rds_client)
+        allow(rds_client).to receive(:describe_db_instances).and_return(rds_instances)
+        allow(rds_client).to receive(:list_tags_for_resource) do |options|
+          rds_tags.fetch(options[:resource_name])
+        end
       end
 
       describe "#lookup" do
