@@ -52,6 +52,23 @@ class Hiera
           expect(service.aws_account_number).to eq "12345678"
         end
       end
+
+      describe "#puppet_fact" do
+        it "returns value of Puppet fact if fact exists" do
+          service = Aws::Base.new "some-fact" => "some-value"
+          expect(service.puppet_fact "some-fact").to eq "some-value"
+        end
+
+        it "returns nil if Puppet fact is nil" do
+          service = Aws::Base.new
+          expect(service.puppet_fact "some-fact").to eq nil
+        end
+
+        it "returns nil if Puppet fact is undefined" do
+          service = Aws::Base.new "some-fact" => :undefined
+          expect(service.puppet_fact "some-fact").to eq nil
+        end
+      end
     end
   end
 end
