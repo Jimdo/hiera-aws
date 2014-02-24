@@ -30,7 +30,7 @@ class Hiera
           next unless service_class
 
           value = service_class.lookup(key, scope)
-          next unless value
+          next if value.nil? || value.empty?
 
           answer = Backend.parse_answer(value, scope)
           break if answer

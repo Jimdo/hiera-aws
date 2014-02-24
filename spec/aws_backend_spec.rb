@@ -57,6 +57,14 @@ class Hiera
           expect_any_instance_of(Aws::RDS).to receive(:lookup).with(key, scope)
           backend.lookup(*params)
         end
+
+        it "returns nil if service returns empty result" do
+          empty_result = []
+          Backend.stub(:datasources).and_yield "aws/rds"
+          Backend.stub(:parse_answer).and_return(empty_result)
+          Aws::RDS.stub(:new).and_return(double(:lookup => empty_result))
+          expect(backend.lookup(*params)).to be_nil
+        end
       end
     end
   end
