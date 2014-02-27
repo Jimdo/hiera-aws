@@ -21,7 +21,7 @@ class Hiera
       def lookup(key, scope, order_override, resolution_type)
         answer = nil
 
-        Hiera.debug("Looking up #{key} in AWS backend")
+        Hiera.debug("Looking up '#{key}' in AWS backend")
 
         Backend.datasources(scope, order_override) do |source|
           Hiera.debug("Looking for data source #{source}")
