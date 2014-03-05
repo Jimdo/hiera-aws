@@ -23,9 +23,9 @@ class Hiera
           if args.shift == "rds"
             if args.length > 0
               tags = Hash[args.map { |t| t.split("=") }]
-              db_instances_with_tags(tags).map { |i| i[:endpoint][:address] }
+              db_instances_with_tags(tags)
             else
-              db_instances.map { |i| i[:endpoint][:address] }
+              db_instances
             end
           end
         end

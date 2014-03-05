@@ -61,17 +61,55 @@ class Hiera
         end
 
         it "returns all database instances if no tags are provided" do
-          expect(rds.lookup("rds", scope)).to eq ["db1.eu-west-1.rds.amazonaws.com",
-                                                  "db2.eu-west-1.rds.amazonaws.com",
-                                                  "db3.eu-west-1.rds.amazonaws.com"]
+          expect(rds.lookup("rds", scope)).to eq [
+            {
+              :db_instance_identifier => "db1",
+              :endpoint => { :address => "db1.eu-west-1.rds.amazonaws.com" }
+            },
+            {
+              :db_instance_identifier => "db2",
+              :endpoint => { :address => "db2.eu-west-1.rds.amazonaws.com" }
+            },
+            {
+              :db_instance_identifier => "db3",
+              :endpoint => { :address => "db3.eu-west-1.rds.amazonaws.com" }
+            }
+          ]
         end
 
-        it "returns database instances with specific tags" do
-          expect(rds.lookup("rds role=mgmt-db", scope)).to eq ["db2.eu-west-1.rds.amazonaws.com",
-                                                               "db3.eu-west-1.rds.amazonaws.com"]
-          expect(rds.lookup("rds environment=dev", scope)).to eq ["db1.eu-west-1.rds.amazonaws.com",
-                                                                  "db2.eu-west-1.rds.amazonaws.com"]
-          expect(rds.lookup("rds environment=production role=mgmt-db", scope)).to eq ["db3.eu-west-1.rds.amazonaws.com"]
+        it "returns database instances with role tag" do
+          expect(rds.lookup("rds role=mgmt-db", scope)).to eq [
+            {
+              :db_instance_identifier => "db2",
+              :endpoint => { :address => "db2.eu-west-1.rds.amazonaws.com" }
+            },
+            {
+              :db_instance_identifier => "db3",
+              :endpoint => { :address => "db3.eu-west-1.rds.amazonaws.com" }
+            }
+          ]
+        end
+
+        it "returns database instances with environment tag" do
+          expect(rds.lookup("rds environment=dev", scope)).to eq [
+            {
+              :db_instance_identifier => "db1",
+              :endpoint => { :address => "db1.eu-west-1.rds.amazonaws.com" }
+            },
+            {
+              :db_instance_identifier => "db2",
+              :endpoint => { :address => "db2.eu-west-1.rds.amazonaws.com" }
+            }
+          ]
+        end
+
+        it "returns database instances with environment and role tags" do
+          expect(rds.lookup("rds environment=production role=mgmt-db", scope)).to eq [
+            {
+              :db_instance_identifier => "db3",
+              :endpoint => { :address => "db3.eu-west-1.rds.amazonaws.com" }
+            }
+          ]
         end
 
         it "returns empty array if no database instances can be found" do
