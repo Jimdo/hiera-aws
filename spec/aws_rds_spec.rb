@@ -9,15 +9,18 @@ class Hiera
           :db_instances => [
             {
               :db_instance_identifier => "db1",
-              :endpoint => { :address => "db1.eu-west-1.rds.amazonaws.com" }
+              :endpoint => { :address => "db1.eu-west-1.rds.amazonaws.com" },
+              :engine => "mysql"
             },
             {
               :db_instance_identifier => "db2",
-              :endpoint => { :address => "db2.eu-west-1.rds.amazonaws.com" }
+              :endpoint => { :address => "db2.eu-west-1.rds.amazonaws.com" },
+              :engine => "mysql"
             },
             {
               :db_instance_identifier => "db3",
-              :endpoint => { :address => "db3.eu-west-1.rds.amazonaws.com" }
+              :endpoint => { :address => "db3.eu-west-1.rds.amazonaws.com" },
+              :engine => "mysql"
             }
           ]
         }
@@ -64,15 +67,18 @@ class Hiera
           expect(rds.lookup("rds", scope)).to eq [
             {
               "db_instance_identifier" => "db1",
-              "endpoint" => { "address" => "db1.eu-west-1.rds.amazonaws.com" }
+              "endpoint" => { "address" => "db1.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
             },
             {
               "db_instance_identifier" => "db2",
-              "endpoint" => { "address" => "db2.eu-west-1.rds.amazonaws.com" }
+              "endpoint" => { "address" => "db2.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
             },
             {
               "db_instance_identifier" => "db3",
-              "endpoint" => { "address" => "db3.eu-west-1.rds.amazonaws.com" }
+              "endpoint" => { "address" => "db3.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
             }
           ]
         end
@@ -81,11 +87,13 @@ class Hiera
           expect(rds.lookup("rds role=mgmt-db", scope)).to eq [
             {
               "db_instance_identifier" => "db2",
-              "endpoint" => { "address" => "db2.eu-west-1.rds.amazonaws.com" }
+              "endpoint" => { "address" => "db2.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
             },
             {
               "db_instance_identifier" => "db3",
-              "endpoint" => { "address" => "db3.eu-west-1.rds.amazonaws.com" }
+              "endpoint" => { "address" => "db3.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
             }
           ]
         end
@@ -94,11 +102,13 @@ class Hiera
           expect(rds.lookup("rds environment=dev", scope)).to eq [
             {
               "db_instance_identifier" => "db1",
-              "endpoint" => { "address" => "db1.eu-west-1.rds.amazonaws.com" }
+              "endpoint" => { "address" => "db1.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
             },
             {
               "db_instance_identifier" => "db2",
-              "endpoint" => { "address" => "db2.eu-west-1.rds.amazonaws.com" }
+              "endpoint" => { "address" => "db2.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
             }
           ]
         end
@@ -107,7 +117,8 @@ class Hiera
           expect(rds.lookup("rds environment=production role=mgmt-db", scope)).to eq [
             {
               "db_instance_identifier" => "db3",
-              "endpoint" => { "address" => "db3.eu-west-1.rds.amazonaws.com" }
+              "endpoint" => { "address" => "db3.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
             }
           ]
         end

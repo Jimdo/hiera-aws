@@ -33,10 +33,11 @@ class Hiera
         private
 
         def db_instances
-          @db_instances ||= @client.describe_db_instances[:db_instances].map do |i|
+          @db_instances ||= @client.describe_db_instances.fetch(:db_instances).map do |i|
             {
               "db_instance_identifier" => i.fetch(:db_instance_identifier),
-              "endpoint"               => stringify_keys(i.fetch(:endpoint))
+              "endpoint"               => stringify_keys(i.fetch(:endpoint)),
+              "engine"                 => i.fetch(:engine)
             }
           end
         end
