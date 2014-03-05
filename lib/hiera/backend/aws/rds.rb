@@ -33,12 +33,17 @@ class Hiera
         private
 
         def db_instances
-          @db_instances ||= @client.describe_db_instances[:db_instances]
+          @db_instances ||= @client.describe_db_instances[:db_instances].map do |i|
+            {
+              "db_instance_identifier" => i.fetch(:db_instance_identifier),
+              "endpoint"               => stringify_keys(i.fetch(:endpoint))
+            }
+          end
         end
 
         def db_instances_with_tags(tags)
           db_instances.select do |i|
-            all_tags = db_instance_tags(i[:db_instance_identifier])
+            all_tags = db_instance_tags(i["db_instance_identifier"])
             tags.all? { |k, v| tags[k] == all_tags[k] }
           end
         end

@@ -37,6 +37,22 @@ class Hiera
           return nil if fact == :undefined
           fact
         end
+
+        # Inspired by http://devblog.avdi.org/2009/07/14/recursively-symbolize-keys/
+        def stringify_keys(hash)
+          hash.reduce({}) do |result, (key, value)|
+            new_key = case key
+                      when Symbol then key.to_s
+                      else key
+                      end
+            new_value = case value
+                        when Hash then stringify_keys(value)
+                        else value
+                        end
+            result[new_key] = new_value
+            result
+          end
+        end
       end
     end
   end
