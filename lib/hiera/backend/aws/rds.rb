@@ -26,25 +26,19 @@ class Hiera
               db_instances_with_tags(tags)
             else
               db_instances
-            end
+            end.map { |i| normalize_instance_data(i) }
           end
         end
 
         private
 
         def db_instances
-          @db_instances ||= @client.describe_db_instances.fetch(:db_instances).map do |i|
-            {
-              "db_instance_identifier" => i.fetch(:db_instance_identifier),
-              "endpoint"               => stringify_keys(i.fetch(:endpoint)),
-              "engine"                 => i.fetch(:engine)
-            }
-          end
+          @db_instances ||= @client.describe_db_instances[:db_instances]
         end
 
         def db_instances_with_tags(tags)
           db_instances.select do |i|
-            all_tags = db_instance_tags(i["db_instance_identifier"])
+            all_tags = db_instance_tags(i.fetch(:db_instance_identifier))
             tags.all? { |k, v| tags[k] == all_tags[k] }
           end
         end
@@ -56,6 +50,15 @@ class Hiera
         def db_instance_tags(db_instance_id)
           tags = @client.list_tags_for_resource(:resource_name => db_resource_name(db_instance_id))
           Hash[tags[:tag_list].map { |t| [t[:key], t[:value]] }]
+        end
+
+        # Process data for consumption by Puppet
+        def normalize_instance_data(hash)
+          {
+            "db_instance_identifier" => hash.fetch(:db_instance_identifier),
+            "endpoint"               => stringify_keys(hash.fetch(:endpoint)),
+            "engine"                 => hash.fetch(:engine)
+          }
         end
       end
     end
