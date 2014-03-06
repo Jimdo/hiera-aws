@@ -11,21 +11,32 @@ class Hiera
         end
 
         # Override default key lookup to implement custom format. Examples:
-        #  - hiera("rds")
-        #  - hiera("rds environment=dev")
-        #  - hiera("rds role=mgmt-db")
-        #  - hiera("rds environment=production role=mgmt-db")
+        #  - hiera("rds_instances")
+        #  - hiera("rds_instances environment=dev")
+        #  - hiera("rds_instances role=mgmt-db")
+        #  - hiera("rds_instances environment=production role=mgmt-db")
         def lookup(key, scope)
           r = super(key, scope)
           return r if r
 
           args = key.split
-          if args.shift == "rds"
+          subkey = args.shift
+
+          # TODO: "rds" has been superseded by "rds_instances" but is still
+          # supported for backward compatibility. Remove it in a future
+          # version.
+          if %w(rds rds_instances).include? subkey
             if args.length > 0
               tags = Hash[args.map { |t| t.split("=") }]
-              db_instances_with_tags(tags).map { |i| i[:endpoint][:address] }
+              db_instances_with_tags(tags)
             else
-              db_instances.map { |i| i[:endpoint][:address] }
+              db_instances
+            end.map do |i|
+              if subkey == "rds"
+                i[:endpoint][:address]
+              else
+                prepare_instance_data(i)
+              end
             end
           end
         end
@@ -38,7 +49,7 @@ class Hiera
 
         def db_instances_with_tags(tags)
           db_instances.select do |i|
-            all_tags = db_instance_tags(i[:db_instance_identifier])
+            all_tags = db_instance_tags(i.fetch(:db_instance_identifier))
             tags.all? { |k, v| tags[k] == all_tags[k] }
           end
         end
@@ -50,6 +61,16 @@ class Hiera
         def db_instance_tags(db_instance_id)
           tags = @client.list_tags_for_resource(:resource_name => db_resource_name(db_instance_id))
           Hash[tags[:tag_list].map { |t| [t[:key], t[:value]] }]
+        end
+
+        # Prepare RDS instance data for consumption by Puppet. For Puppet to
+        # work, all hash keys have to be converted from symbols to strings.
+        def prepare_instance_data(hash)
+          {
+            "db_instance_identifier" => hash.fetch(:db_instance_identifier),
+            "endpoint"               => stringify_keys(hash.fetch(:endpoint)),
+            "engine"                 => hash.fetch(:engine)
+          }
         end
       end
     end

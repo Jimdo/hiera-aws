@@ -97,6 +97,9 @@ cluster_nodes = hiera("memcached_cluster_nodes_for_cfn_stack")
 
 ### rds tag=value...
 
+**Note: "rds" has been superseded by "rds_instances" (see below). It is still
+supported for backward compatibility, but will be removed in a future version.**
+
 Returns an array of all RDS database instances that have one or more tags. The
 returned array has the format `["host1", "host2"]`.
 
@@ -111,6 +114,38 @@ rds_instances = hiera("rds environment=dev")
 
 # Get all database instances that have two specific tags
 rds_instances = hiera("rds environment=production role=mgmt-db")
+```
+
+### rds_instances tag=value...
+
+Returns an array of all RDS database instances that have one or more tags
+assigned.
+
+For each instance in the array the following hash is returned:
+
+```json
+{
+    "db_instance_identifier" => "some-instance-identifier",
+    "endpoint" => {"address" => "some.rds.endpoint", "port" => 3306},
+    "engine" => "mysql"
+}
+```
+
+Usage:
+
+```
+# Get all RDS instances
+rds_instances = hiera("rds_instances")
+
+# Get all RDS instances that have a tag named "environment" with the value "dev"
+rds_instances = hiera("rds_instances environment=dev")
+
+# Get all RDS instances that have two specific tags
+rds_instances = hiera("rds_instances environment=production role=mgmt-db")
+
+# Accessing specific properties of the first RDS instance
+$instance_identifier = $rds_instances[0]['db_instance_identifier']
+$endpoint_address = $rds_instances[0]['endpoint']['address']
 ```
 
 ## License and Authors

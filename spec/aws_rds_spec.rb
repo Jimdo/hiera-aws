@@ -9,15 +9,18 @@ class Hiera
           :db_instances => [
             {
               :db_instance_identifier => "db1",
-              :endpoint => { :address => "db1.eu-west-1.rds.amazonaws.com" }
+              :endpoint => { :address => "db1.eu-west-1.rds.amazonaws.com" },
+              :engine => "mysql"
             },
             {
               :db_instance_identifier => "db2",
-              :endpoint => { :address => "db2.eu-west-1.rds.amazonaws.com" }
+              :endpoint => { :address => "db2.eu-west-1.rds.amazonaws.com" },
+              :engine => "mysql"
             },
             {
               :db_instance_identifier => "db3",
-              :endpoint => { :address => "db3.eu-west-1.rds.amazonaws.com" }
+              :endpoint => { :address => "db3.eu-west-1.rds.amazonaws.com" },
+              :engine => "mysql"
             }
           ]
         }
@@ -53,7 +56,10 @@ class Hiera
         end
       end
 
-      describe "#lookup" do
+      # TODO: "rds" has been superseded by "rds_instances" but is still
+      # supported for backward compatibility. Remove it in a future
+      # version.
+      describe "rds lookup (deprecated)" do
         let(:scope) { { "aws_account_number" => "12345678" } }
 
         it "returns nil if Hiera key is unknown" do
@@ -76,6 +82,78 @@ class Hiera
 
         it "returns empty array if no database instances can be found" do
           expect(rds.lookup("rds environment=staging", scope)).to eq []
+        end
+      end
+
+      describe "rds_instances lookup" do
+        let(:scope) { { "aws_account_number" => "12345678" } }
+
+        it "returns nil if Hiera key is unknown" do
+          expect(rds.lookup("doge", scope)).to be_nil
+        end
+
+        it "returns all database instances if no tags are provided" do
+          expect(rds.lookup("rds_instances", scope)).to eq [
+            {
+              "db_instance_identifier" => "db1",
+              "endpoint" => { "address" => "db1.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
+            },
+            {
+              "db_instance_identifier" => "db2",
+              "endpoint" => { "address" => "db2.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
+            },
+            {
+              "db_instance_identifier" => "db3",
+              "endpoint" => { "address" => "db3.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
+            }
+          ]
+        end
+
+        it "returns database instances with role tag" do
+          expect(rds.lookup("rds_instances role=mgmt-db", scope)).to eq [
+            {
+              "db_instance_identifier" => "db2",
+              "endpoint" => { "address" => "db2.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
+            },
+            {
+              "db_instance_identifier" => "db3",
+              "endpoint" => { "address" => "db3.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
+            }
+          ]
+        end
+
+        it "returns database instances with environment tag" do
+          expect(rds.lookup("rds_instances environment=dev", scope)).to eq [
+            {
+              "db_instance_identifier" => "db1",
+              "endpoint" => { "address" => "db1.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
+            },
+            {
+              "db_instance_identifier" => "db2",
+              "endpoint" => { "address" => "db2.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
+            }
+          ]
+        end
+
+        it "returns database instances with environment and role tags" do
+          expect(rds.lookup("rds_instances environment=production role=mgmt-db", scope)).to eq [
+            {
+              "db_instance_identifier" => "db3",
+              "endpoint" => { "address" => "db3.eu-west-1.rds.amazonaws.com" },
+              "engine" => "mysql"
+            }
+          ]
+        end
+
+        it "returns empty array if no database instances can be found" do
+          expect(rds.lookup("rds_instances environment=staging", scope)).to eq []
         end
       end
     end
