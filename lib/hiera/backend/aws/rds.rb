@@ -35,7 +35,7 @@ class Hiera
               if subkey == "rds"
                 i[:endpoint][:address]
               else
-                normalize_instance_data(i)
+                prepare_instance_data(i)
               end
             end
           end
@@ -63,8 +63,9 @@ class Hiera
           Hash[tags[:tag_list].map { |t| [t[:key], t[:value]] }]
         end
 
-        # Process data for consumption by Puppet
-        def normalize_instance_data(hash)
+        # Prepare RDS instance data for consumption by Puppet. For Puppet to
+        # work, all hash keys have to be converted from symbols to strings.
+        def prepare_instance_data(hash)
           {
             "db_instance_identifier" => hash.fetch(:db_instance_identifier),
             "endpoint"               => stringify_keys(hash.fetch(:endpoint)),
