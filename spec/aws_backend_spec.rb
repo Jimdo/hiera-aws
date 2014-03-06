@@ -8,7 +8,7 @@ class Hiera
       end
 
       describe "#initialize" do
-        it "uses AWS credentials from environment or IAM role by default" do
+        it "does not change AWS configuration by default" do
           Config.stub(:[]).with(:aws)
           expect(AWS).to_not receive(:config)
           Aws_backend.new

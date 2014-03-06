@@ -13,7 +13,7 @@ class Hiera
           require "aws-sdk"
         end
 
-        setup_aws_credentials
+        setup_aws_config
 
         Hiera.debug("AWS backend initialized")
       end
@@ -40,7 +40,7 @@ class Hiera
 
       private
 
-      def setup_aws_credentials
+      def setup_aws_config
         if Config[:aws]
           aws_config = {}
 
