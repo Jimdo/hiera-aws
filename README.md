@@ -51,6 +51,14 @@ the backend configuration in `hiera.yml`:
   :secret_access_key: your_aws_secret_access_key_here
 ```
 
+In addition to credentials, you can also specify a particular AWS region that
+will be used for all AWS API operations:
+
+```yaml
+:aws:
+  :region: eu-west-1
+```
+
 ## Hiera Keys
 
 The backend currently supports the following keys that you can pass to the
