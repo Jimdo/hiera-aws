@@ -15,21 +15,19 @@ class Hiera
         end
 
         it "uses AWS credentials from backend configuration if provided" do
-          credentials = {
-            :access_key_id     => "some_access_key_id",
-            :secret_access_key => "some_secret_access_key"
+          aws_config = {
+            :access_key_id     => "some-access-key-id",
+            :secret_access_key => "some-secret-access-key"
           }
-
-          Config.stub(:[]).with(:aws).and_return(credentials)
-          expect(AWS).to receive(:config).with(credentials)
+          Config.stub(:[]).with(:aws).and_return(aws_config)
+          expect(AWS).to receive(:config).with(aws_config)
           Aws_backend.new
         end
 
         it "uses particular AWS region if provided" do
           aws_config = {
-            :region => "some_aws_region"
+            :region => "some-aws-region"
           }
-
           Config.stub(:[]).with(:aws).and_return(aws_config)
           expect(AWS).to receive(:config).with(aws_config)
           Aws_backend.new
