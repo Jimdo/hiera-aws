@@ -26,13 +26,9 @@ class Hiera
 
       describe "#aws_region" do
         it "returns the region set by global AWS config" do
-          aws_config = {
-            :region => "some-aws-region"
-          }
-
-          AWS.stub(:config).and_return(double(:to_hash => aws_config))
+          AWS.stub(:config).and_return(double(:region => "some-region"))
           service = Aws::Base.new
-          expect(service.aws_region).to eq "some-aws-region"
+          expect(service.aws_region).to eq "some-region"
         end
       end
 

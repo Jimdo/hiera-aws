@@ -48,7 +48,7 @@ class Hiera
       end
 
       before do
-        AWS.stub(:config).and_return(double(:to_hash => { :region => "some-region" }))
+        AWS.stub(:config).and_return(double(:region => "some-region"))
 
         rds_client = double
         AWS::RDS::Client.stub(:new).and_return(rds_client)

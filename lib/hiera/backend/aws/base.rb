@@ -14,7 +14,7 @@ class Hiera
         attr_reader :scope
 
         def aws_region
-          AWS.config.to_hash[:region]
+          AWS.config.region
         end
 
         def aws_account_number
