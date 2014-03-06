@@ -7,7 +7,7 @@ class Hiera
       class RDS < Base
         def initialize(scope = {})
           super(scope)
-          @client = AWS::RDS::Client.new :region => aws_region
+          @client = AWS::RDS::Client.new
         end
 
         # Override default key lookup to implement custom format. Examples:

@@ -9,17 +9,17 @@ class Hiera
           :db_instances => [
             {
               :db_instance_identifier => "db1",
-              :endpoint => { :address => "db1.eu-west-1.rds.amazonaws.com" },
+              :endpoint => { :address => "db1.some-region.rds.amazonaws.com" },
               :engine => "mysql"
             },
             {
               :db_instance_identifier => "db2",
-              :endpoint => { :address => "db2.eu-west-1.rds.amazonaws.com" },
+              :endpoint => { :address => "db2.some-region.rds.amazonaws.com" },
               :engine => "mysql"
             },
             {
               :db_instance_identifier => "db3",
-              :endpoint => { :address => "db3.eu-west-1.rds.amazonaws.com" },
+              :endpoint => { :address => "db3.some-region.rds.amazonaws.com" },
               :engine => "mysql"
             }
           ]
@@ -27,18 +27,18 @@ class Hiera
       end
       let(:rds_tags) do
         {
-          "arn:aws:rds:eu-west-1:12345678:db:db1" => {
+          "arn:aws:rds:some-region:12345678:db:db1" => {
             :tag_list => [
               { :key => "environment", :value => "dev" }
             ]
           },
-          "arn:aws:rds:eu-west-1:12345678:db:db2" => {
+          "arn:aws:rds:some-region:12345678:db:db2" => {
             :tag_list => [
               { :key => "environment", :value => "dev" },
               { :key => "role", :value => "mgmt-db" }
             ]
           },
-          "arn:aws:rds:eu-west-1:12345678:db:db3" => {
+          "arn:aws:rds:some-region:12345678:db:db3" => {
             :tag_list => [
               { :key => "environment", :value => "production" },
               { :key => "role", :value => "mgmt-db" }
@@ -48,6 +48,8 @@ class Hiera
       end
 
       before do
+        AWS.stub(:config).and_return(double(:to_hash => { :region => "some-region" }))
+
         rds_client = double
         AWS::RDS::Client.stub(:new).and_return(rds_client)
         allow(rds_client).to receive(:describe_db_instances).and_return(rds_instances)
@@ -67,17 +69,17 @@ class Hiera
         end
 
         it "returns all database instances if no tags are provided" do
-          expect(rds.lookup("rds", scope)).to eq ["db1.eu-west-1.rds.amazonaws.com",
-                                                  "db2.eu-west-1.rds.amazonaws.com",
-                                                  "db3.eu-west-1.rds.amazonaws.com"]
+          expect(rds.lookup("rds", scope)).to eq ["db1.some-region.rds.amazonaws.com",
+                                                  "db2.some-region.rds.amazonaws.com",
+                                                  "db3.some-region.rds.amazonaws.com"]
         end
 
         it "returns database instances with specific tags" do
-          expect(rds.lookup("rds role=mgmt-db", scope)).to eq ["db2.eu-west-1.rds.amazonaws.com",
-                                                               "db3.eu-west-1.rds.amazonaws.com"]
-          expect(rds.lookup("rds environment=dev", scope)).to eq ["db1.eu-west-1.rds.amazonaws.com",
-                                                                  "db2.eu-west-1.rds.amazonaws.com"]
-          expect(rds.lookup("rds environment=production role=mgmt-db", scope)).to eq ["db3.eu-west-1.rds.amazonaws.com"]
+          expect(rds.lookup("rds role=mgmt-db", scope)).to eq ["db2.some-region.rds.amazonaws.com",
+                                                               "db3.some-region.rds.amazonaws.com"]
+          expect(rds.lookup("rds environment=dev", scope)).to eq ["db1.some-region.rds.amazonaws.com",
+                                                                  "db2.some-region.rds.amazonaws.com"]
+          expect(rds.lookup("rds environment=production role=mgmt-db", scope)).to eq ["db3.some-region.rds.amazonaws.com"]
         end
 
         it "returns empty array if no database instances can be found" do
@@ -96,17 +98,17 @@ class Hiera
           expect(rds.lookup("rds_instances", scope)).to eq [
             {
               "db_instance_identifier" => "db1",
-              "endpoint" => { "address" => "db1.eu-west-1.rds.amazonaws.com" },
+              "endpoint" => { "address" => "db1.some-region.rds.amazonaws.com" },
               "engine" => "mysql"
             },
             {
               "db_instance_identifier" => "db2",
-              "endpoint" => { "address" => "db2.eu-west-1.rds.amazonaws.com" },
+              "endpoint" => { "address" => "db2.some-region.rds.amazonaws.com" },
               "engine" => "mysql"
             },
             {
               "db_instance_identifier" => "db3",
-              "endpoint" => { "address" => "db3.eu-west-1.rds.amazonaws.com" },
+              "endpoint" => { "address" => "db3.some-region.rds.amazonaws.com" },
               "engine" => "mysql"
             }
           ]
@@ -116,12 +118,12 @@ class Hiera
           expect(rds.lookup("rds_instances role=mgmt-db", scope)).to eq [
             {
               "db_instance_identifier" => "db2",
-              "endpoint" => { "address" => "db2.eu-west-1.rds.amazonaws.com" },
+              "endpoint" => { "address" => "db2.some-region.rds.amazonaws.com" },
               "engine" => "mysql"
             },
             {
               "db_instance_identifier" => "db3",
-              "endpoint" => { "address" => "db3.eu-west-1.rds.amazonaws.com" },
+              "endpoint" => { "address" => "db3.some-region.rds.amazonaws.com" },
               "engine" => "mysql"
             }
           ]
@@ -131,12 +133,12 @@ class Hiera
           expect(rds.lookup("rds_instances environment=dev", scope)).to eq [
             {
               "db_instance_identifier" => "db1",
-              "endpoint" => { "address" => "db1.eu-west-1.rds.amazonaws.com" },
+              "endpoint" => { "address" => "db1.some-region.rds.amazonaws.com" },
               "engine" => "mysql"
             },
             {
               "db_instance_identifier" => "db2",
-              "endpoint" => { "address" => "db2.eu-west-1.rds.amazonaws.com" },
+              "endpoint" => { "address" => "db2.some-region.rds.amazonaws.com" },
               "engine" => "mysql"
             }
           ]
@@ -146,7 +148,7 @@ class Hiera
           expect(rds.lookup("rds_instances environment=production role=mgmt-db", scope)).to eq [
             {
               "db_instance_identifier" => "db3",
-              "endpoint" => { "address" => "db3.eu-west-1.rds.amazonaws.com" },
+              "endpoint" => { "address" => "db3.some-region.rds.amazonaws.com" },
               "engine" => "mysql"
             }
           ]

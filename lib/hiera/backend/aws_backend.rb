@@ -41,15 +41,26 @@ class Hiera
       private
 
       def setup_aws_credentials
-        if Config[:aws] && Config[:aws][:access_key_id] && Config[:aws][:secret_access_key]
-          Hiera.debug("Using AWS credentials from backend configuration")
+        if Config[:aws]
+          aws_config = {}
 
-          AWS.config(
-            :access_key_id     => Config[:aws][:access_key_id],
-            :secret_access_key => Config[:aws][:secret_access_key]
-          )
-        else
-          Hiera.debug("Using AWS credentials from environment or IAM role")
+          if Config[:aws][:access_key_id] && Config[:aws][:secret_access_key]
+            Hiera.debug("Using AWS credentials from backend configuration")
+            aws_config[:access_key_id] = Config[:aws][:access_key_id]
+            aws_config[:secret_access_key] = Config[:aws][:secret_access_key]
+          else
+            Hiera.debug("Using AWS credentials from environment or IAM role")
+          end
+
+          region = Config[:aws][:region]
+          if region
+            Hiera.debug("Using AWS region '#{region}' from backend configuration")
+            aws_config[:region] = region
+          else
+            Hiera.debug("Using default AWS region")
+          end
+
+          AWS.config(aws_config)
         end
       end
 

@@ -24,6 +24,16 @@ class Hiera
           expect(AWS).to receive(:config).with(credentials)
           Aws_backend.new
         end
+
+        it "uses particular AWS region if provided" do
+          aws_config = {
+            :region => "some_aws_region"
+          }
+
+          Config.stub(:[]).with(:aws).and_return(aws_config)
+          expect(AWS).to receive(:config).with(aws_config)
+          Aws_backend.new
+        end
       end
 
       describe "#lookup" do
