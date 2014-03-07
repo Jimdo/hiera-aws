@@ -25,15 +25,10 @@ class Hiera
       end
 
       describe "#aws_region" do
-        it "defaults to eu-west-1" do
+        it "returns the region set by global AWS config" do
+          AWS.stub(:config).and_return(double(:region => "some-region"))
           service = Aws::Base.new
-          expect(service.aws_region).to eq "eu-west-1"
-        end
-
-        it "can be set via Puppet fact" do
-          scope = { "location" => "some-aws-region" }
-          service = Aws::Base.new scope
-          expect(service.aws_region).to eq "some-aws-region"
+          expect(service.aws_region).to eq "some-region"
         end
       end
 

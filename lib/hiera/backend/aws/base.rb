@@ -14,7 +14,7 @@ class Hiera
         attr_reader :scope
 
         def aws_region
-          puppet_fact("location") || "eu-west-1"
+          AWS.config.region
         end
 
         def aws_account_number
