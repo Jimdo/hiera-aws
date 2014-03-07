@@ -20,24 +20,13 @@ class Hiera
           return r if r
 
           args = key.split
-          subkey = args.shift
-
-          # TODO: "rds" has been superseded by "rds_instances" but is still
-          # supported for backward compatibility. Remove it in a future
-          # version.
-          if %w(rds rds_instances).include? subkey
+          if args.shift == "rds_instances"
             if args.length > 0
               tags = Hash[args.map { |t| t.split("=") }]
               db_instances_with_tags(tags)
             else
               db_instances
-            end.map do |i|
-              if subkey == "rds"
-                i[:endpoint][:address]
-              else
-                prepare_instance_data(i)
-              end
-            end
+            end.map { |i| prepare_instance_data(i) }
           end
         end
 
