@@ -58,36 +58,7 @@ class Hiera
         end
       end
 
-      # TODO: "rds" has been superseded by "rds_instances" but is still
-      # supported for backward compatibility. Remove it in a future
-      # version.
-      describe "rds lookup (deprecated)" do
-        let(:scope) { { "aws_account_number" => "12345678" } }
-
-        it "returns nil if Hiera key is unknown" do
-          expect(rds.lookup("doge", scope)).to be_nil
-        end
-
-        it "returns all database instances if no tags are provided" do
-          expect(rds.lookup("rds", scope)).to eq ["db1.some-region.rds.amazonaws.com",
-                                                  "db2.some-region.rds.amazonaws.com",
-                                                  "db3.some-region.rds.amazonaws.com"]
-        end
-
-        it "returns database instances with specific tags" do
-          expect(rds.lookup("rds role=mgmt-db", scope)).to eq ["db2.some-region.rds.amazonaws.com",
-                                                               "db3.some-region.rds.amazonaws.com"]
-          expect(rds.lookup("rds environment=dev", scope)).to eq ["db1.some-region.rds.amazonaws.com",
-                                                                  "db2.some-region.rds.amazonaws.com"]
-          expect(rds.lookup("rds environment=production role=mgmt-db", scope)).to eq ["db3.some-region.rds.amazonaws.com"]
-        end
-
-        it "returns empty array if no database instances can be found" do
-          expect(rds.lookup("rds environment=staging", scope)).to eq []
-        end
-      end
-
-      describe "rds_instances lookup" do
+      describe "#lookup" do
         let(:scope) { { "aws_account_number" => "12345678" } }
 
         it "returns nil if Hiera key is unknown" do
