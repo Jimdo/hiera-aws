@@ -5,16 +5,7 @@ class Hiera
     module Aws
       # Implementation of Hiera keys for aws/elasticache
       class ElastiCache < Base
-        def cache_nodes_by_cache_cluster_id
-          client = AWS::ElastiCache::Client.new
-          cache_cluster_id = scope["cache_cluster_id"]
-          raise MissingFactError, "cache_cluster_id not found" unless cache_cluster_id
-          options = { :cache_cluster_id => cache_cluster_id, :show_cache_node_info => true }
-          nodes = client.describe_cache_clusters(options)[:cache_clusters].first[:cache_nodes]
-          nodes.map { |node| "#{node[:endpoint][:address]}:#{node[:endpoint][:port]}" }
-        end
-
-        #
+          #
         # XXX: Lots of spiked code ahead that MUST be refactored.
         #
         def cfn_stack_name(instance_id)

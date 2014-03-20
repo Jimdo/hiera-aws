@@ -64,21 +64,6 @@ will be used for all AWS API operations:
 The backend currently supports the following keys that you can pass to the
 `hiera()` function to look up objects in AWS.
 
-### cache_nodes_by_cache_cluster_id
-
-Returns an array of all nodes part of a ElastiCache cluster. The cluster is
-identified by its physical ID which must be passed to the backend via the Puppet
-fact `$cache_cluster_id`. The returned array has the format `["host1:port",
-"host2:port"]`.
-
-Usage:
-
-```
-$cache_cluster_id = "your_cluster_id"
-
-cluster_nodes = hiera("cache_nodes_by_cache_cluster_id")
-```
-
 ### redis_cluster_nodes_for_cfn_stack
 
 Returns an array of all Redis cluster nodes for the CloudFormation stack of an

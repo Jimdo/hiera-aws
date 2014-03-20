@@ -60,22 +60,6 @@ class Hiera
         AWS::CloudFormation.stub(:new => cfn_client)
       end
 
-      describe "#cache_nodes_by_cache_cluster_id" do
-        it "raises an exception when called without cache_cluster_id set" do
-          elasticache = Aws::ElastiCache.new
-          expect do
-            elasticache.cache_nodes_by_cache_cluster_id
-          end.to raise_error Aws::MissingFactError
-        end
-
-        it "returns all nodes in cache cluster" do
-          scope = { "cache_cluster_id" => "some-cluster-id" }
-          elasticache = Aws::ElastiCache.new scope
-          AWS::ElastiCache::Client.stub(:new => ec_redis_client)
-          expect(elasticache.cache_nodes_by_cache_cluster_id).to eq ["1.1.1.1:1234", "2.2.2.2:1234"]
-        end
-      end
-
       describe "#redis_cluster_nodes_for_cfn_stack" do
         it "raises an exception when ec2_instance_id fact is missing" do
           elasticache = Aws::ElastiCache.new
