@@ -72,7 +72,14 @@ class Hiera
           scope = { "ec2_instance_id" => "some-ec2-instance-id" }
           elasticache = Aws::ElastiCache.new scope
           AWS::ElastiCache::Client.stub(:new => ec_redis_client)
-          expect(elasticache.redis_cluster_nodes_for_cfn_stack).to eq ["1.1.1.1", "2.2.2.2"]
+          expect(elasticache.redis_cluster_nodes_for_cfn_stack).to eq [
+            {
+              "endpoint" => { "address" => "1.1.1.1", "port" => 1234 }
+            },
+            {
+              "endpoint" => { "address" => "2.2.2.2", "port" => 1234 }
+            }
+          ]
         end
       end
 
@@ -88,7 +95,14 @@ class Hiera
           scope = { "ec2_instance_id" => "some-ec2-instance-id" }
           elasticache = Aws::ElastiCache.new scope
           AWS::ElastiCache::Client.stub(:new => ec_memcached_client)
-          expect(elasticache.memcached_cluster_nodes_for_cfn_stack).to eq ["3.3.3.3", "4.4.4.4"]
+          expect(elasticache.memcached_cluster_nodes_for_cfn_stack).to eq [
+            {
+              "endpoint" => { "address" => "3.3.3.3", "port" => 5678 }
+            },
+            {
+              "endpoint" => { "address" => "4.4.4.4", "port" => 5678 }
+            }
+          ]
         end
       end
     end

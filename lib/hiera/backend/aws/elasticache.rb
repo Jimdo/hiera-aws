@@ -51,7 +51,7 @@ class Hiera
           clusters = cache_clusters_in_cfn_stack(stack_name, cluster_engine)
           clusters.each do |cluster|
             nodes = cluster.fetch(:cache_nodes)
-            endpoints += nodes.map { |node| node[:endpoint][:address] }
+            endpoints += nodes.map { |node| { "endpoint" => stringify_keys(node.fetch(:endpoint)) } }
           end
           endpoints
         end
