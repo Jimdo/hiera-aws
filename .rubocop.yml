@@ -15,3 +15,5 @@ SignalException:
   Enabled: false
 StringLiterals:
   Enabled: false
+TrailingComma:
+  Enabled: false

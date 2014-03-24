@@ -33,7 +33,7 @@ class Hiera
       end
 
       describe "#redis_cluster_nodes_for_cfn_stack" do
-        let(:redis_cache_clusters) do
+        let(:cache_clusters) do
           {
             :cache_clusters => [{
               :cache_nodes => [
@@ -57,9 +57,9 @@ class Hiera
           scope = { "ec2_instance_id" => "some-ec2-instance-id" }
           elasticache = Aws::ElastiCache.new scope
 
-          ec_redis_client = double
-          allow(ec_redis_client).to receive(:describe_cache_clusters).and_return(redis_cache_clusters)
-          AWS::ElastiCache::Client.stub(:new => ec_redis_client)
+          client = double
+          allow(client).to receive(:describe_cache_clusters).and_return(cache_clusters)
+          AWS::ElastiCache::Client.stub(:new => client)
 
           expect(elasticache.redis_cluster_nodes_for_cfn_stack).to eq [
             {
@@ -73,7 +73,7 @@ class Hiera
       end
 
       describe "#redis_cluster_replica_groups_for_cfn_stack" do
-        let(:redis_cache_clusters) do
+        let(:cache_clusters) do
           {
             :cache_clusters => [{
               :cache_nodes => [
@@ -85,7 +85,7 @@ class Hiera
             }]
           }
         end
-        let(:redis_replication_groups) do
+        let(:replication_groups) do
           {
             :replication_groups => [{
               :node_groups => [{
@@ -99,10 +99,10 @@ class Hiera
           scope = { "ec2_instance_id" => "some-ec2-instance-id" }
           elasticache = Aws::ElastiCache.new scope
 
-          ec_redis_client = double
-          allow(ec_redis_client).to receive(:describe_cache_clusters).and_return(redis_cache_clusters)
-          allow(ec_redis_client).to receive(:describe_replication_groups).with(:replication_group_id => "some-group-id").and_return(redis_replication_groups)
-          AWS::ElastiCache::Client.stub(:new => ec_redis_client)
+          client = double
+          allow(client).to receive(:describe_cache_clusters).and_return(cache_clusters)
+          allow(client).to receive(:describe_replication_groups).with(:replication_group_id => "some-group-id").and_return(replication_groups)
+          AWS::ElastiCache::Client.stub(:new => client)
 
           expect(elasticache.redis_cluster_replica_groups_for_cfn_stack).to eq [
             {
@@ -113,8 +113,7 @@ class Hiera
         end
 
         context "multiple defined cache clusters are in the same replica group" do
-
-          let(:redis_cache_clusters) do
+          let(:cache_clusters) do
             {
               :cache_clusters => [
                 {
@@ -136,7 +135,7 @@ class Hiera
               ]
             }
           end
-          let(:redis_replication_groups) do
+          let(:replication_groups) do
             {
               :replication_groups => [{
                 :node_groups => [{
@@ -150,10 +149,10 @@ class Hiera
             scope = { "ec2_instance_id" => "some-ec2-instance-id" }
             elasticache = Aws::ElastiCache.new scope
 
-            ec_redis_client = double
-            allow(ec_redis_client).to receive(:describe_cache_clusters).and_return(redis_cache_clusters)
-            allow(ec_redis_client).to receive(:describe_replication_groups).with(:replication_group_id => "some-group-id").and_return(redis_replication_groups)
-            AWS::ElastiCache::Client.stub(:new => ec_redis_client)
+            client = double
+            allow(client).to receive(:describe_cache_clusters).and_return(cache_clusters)
+            allow(client).to receive(:describe_replication_groups).with(:replication_group_id => "some-group-id").and_return(replication_groups)
+            AWS::ElastiCache::Client.stub(:new => client)
 
             expect(elasticache.redis_cluster_replica_groups_for_cfn_stack).to eq [
               {
@@ -183,7 +182,7 @@ class Hiera
               }
             )
           end
-          let(:redis_cache_clusters) do
+          let(:cache_clusters) do
             {
               "some-cluster-id" => {
                 :cache_clusters => [
@@ -210,7 +209,7 @@ class Hiera
               }
             }
           end
-          let(:redis_replication_groups) do
+          let(:replication_groups) do
             {
               :replication_groups => [{
                 :node_groups => [{
@@ -219,18 +218,18 @@ class Hiera
               }]
             }
           end
+
           it "returns all Redis replica groups and does not fail" do
             scope = { "ec2_instance_id" => "some-ec2-instance-id" }
             elasticache = Aws::ElastiCache.new scope
 
-            ec_redis_client = double
-
-            allow(ec_redis_client).to receive(:describe_cache_clusters) do |options|
-              redis_cache_clusters.fetch(options.fetch(:cache_cluster_id))
+            client = double
+            allow(client).to receive(:describe_cache_clusters) do |options|
+              cache_clusters.fetch(options.fetch(:cache_cluster_id))
             end
 
-            allow(ec_redis_client).to receive(:describe_replication_groups).with(:replication_group_id => "some-group-id").and_return(redis_replication_groups)
-            AWS::ElastiCache::Client.stub(:new => ec_redis_client)
+            allow(client).to receive(:describe_replication_groups).with(:replication_group_id => "some-group-id").and_return(replication_groups)
+            AWS::ElastiCache::Client.stub(:new => client)
 
             expect(elasticache.redis_cluster_replica_groups_for_cfn_stack).to eq [
               {
@@ -251,7 +250,7 @@ class Hiera
         end
 
         context "single cache cluster" do
-          let(:memcached_cache_clusters) do
+          let(:cache_clusters) do
             {
               :cache_clusters => [{
                 :cache_nodes => [
@@ -269,7 +268,7 @@ class Hiera
             elasticache = Aws::ElastiCache.new scope
 
             ec_memcached_client = double
-            allow(ec_memcached_client).to receive(:describe_cache_clusters).and_return(memcached_cache_clusters)
+            allow(ec_memcached_client).to receive(:describe_cache_clusters).and_return(cache_clusters)
             AWS::ElastiCache::Client.stub(:new => ec_memcached_client)
 
             expect(elasticache.memcached_cluster_nodes_for_cfn_stack).to eq [
