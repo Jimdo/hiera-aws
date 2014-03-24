@@ -56,6 +56,40 @@ class Hiera
           endpoints
         end
 
+        def cluster_replica_groups_for_cfn_stack(cluster_engine = nil)
+          ec2_instance_id = scope["ec2_instance_id"]
+          raise MissingFactError, "ec2_instance_id not found" unless ec2_instance_id
+
+          replica_groups = {}
+          stack_name = cfn_stack_name(ec2_instance_id)
+
+          clusters = cache_clusters_in_cfn_stack(stack_name, cluster_engine)
+          clusters.each do |cluster|
+            replication_group_id = cluster[:replication_group_id]
+            next unless replication_group_id
+
+            client = AWS::ElastiCache::Client.new
+            replication_group = client.describe_replication_groups(:replication_group_id => replication_group_id)[:replication_groups].first
+
+            primary_endpoint = replication_group.fetch(:node_groups).first.fetch(:primary_endpoint)
+
+            replica_groups[replication_group_id] = {
+              :primary_endpoint => primary_endpoint
+            }
+          end
+
+          replica_groups.map do |k, v|
+            {
+              "replication_group_id" => k,
+              "primary_endpoint"     => stringify_keys(v[:primary_endpoint])
+            }
+          end
+        end
+
+        def redis_cluster_replica_groups_for_cfn_stack
+          cluster_replica_groups_for_cfn_stack(:redis)
+        end
+
         def redis_cluster_nodes_for_cfn_stack
           cluster_nodes_for_cfn_stack(:redis)
         end

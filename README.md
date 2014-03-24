@@ -76,6 +76,27 @@ Usage:
 cluster_nodes = hiera("redis_cluster_nodes_for_cfn_stack")
 ```
 
+### redis_cluster_replica_groups_for_cfn_stack
+
+Returns an array of the Redis Replication Groups of all Redis cluster nodes for
+the CloudFormation stack of an EC2 Instance. The instance is identified by the
+Puppet fact `$ec2_instance_id`.
+
+Usage:
+
+```
+elasticache_redis_replication_groups = hiera("redis_cluster_replica_groups_for_cfn_stack")
+```
+
+For each replica group in the array the following hash is returned:
+
+```json
+{
+    "replication_group_id" => "some-group-id",
+    "primary_endpoint"     => { "address" => "some.replication.group.primary.endpoint", "port" => 1234 }
+}
+```
+
 ### memcached_cluster_nodes_for_cfn_stack
 
 Returns an array of all Memcached cluster nodes for the CloudFormation stack of
