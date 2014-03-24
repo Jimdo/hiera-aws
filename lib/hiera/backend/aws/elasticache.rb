@@ -69,7 +69,7 @@ class Hiera
             next unless replication_group_id
 
             client = AWS::ElastiCache::Client.new
-            replication_group = client.describe_replication_groups(:replication_group_id => replication_group_id).fetch(:replication_groups).first
+            replication_group = client.describe_replication_groups(:replication_group_id => replication_group_id)[:replication_groups].first
 
             primary_endpoint = replication_group.fetch(:node_groups).first.fetch(:primary_endpoint)
 
