@@ -124,8 +124,9 @@ $endpoint_address = $rds_instances[0]['endpoint']['address']
 
 * Author:: Mathias Lafeldt (mathias.lafeldt@jimdo.com)
 * Author:: Deniz Adrian (deniz.adrian@jimdo.com)
+* Author:: Soenke Ruempler (soenke.ruempler@jimdo.com)
 
-Copyright:: 2013, Jimdo GmbH
+Copyright:: 2013-2014, Jimdo GmbH
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
