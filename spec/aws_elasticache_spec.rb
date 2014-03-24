@@ -31,8 +31,8 @@ class Hiera
         Aws::ElastiCache.new scope
       end
 
-      let(:some_cache_node){ {:endpoint => {:address => "1.1.1.1", :port => 1234}} }
-      let(:another_cache_node){ {:endpoint => {:address => "2.2.2.2", :port => 1234}} }
+      let(:some_cache_node) { { :endpoint => { :address => "1.1.1.1", :port => 1234 } } }
+      let(:another_cache_node) { { :endpoint => { :address => "2.2.2.2", :port => 1234 } } }
 
       before do
         AWS::EC2.stub(:new => ec2_client)
