@@ -26,6 +26,13 @@ class Hiera
           }
         )
       end
+      let(:elasticache) do
+        scope = { "ec2_instance_id" => "some-ec2-instance-id" }
+        Aws::ElastiCache.new scope
+      end
+
+      let(:some_cache_node){ {:endpoint => {:address => "1.1.1.1", :port => 1234}} }
+      let(:another_cache_node){ {:endpoint => {:address => "2.2.2.2", :port => 1234}} }
 
       before do
         AWS::EC2.stub(:new => ec2_client)
@@ -37,8 +44,8 @@ class Hiera
           {
             :cache_clusters => [{
               :cache_nodes => [
-                { :endpoint => { :address => "1.1.1.1", :port => 1234 } },
-                { :endpoint => { :address => "2.2.2.2", :port => 1234 } }
+                some_cache_node,
+                another_cache_node
 
               ],
               :engine => "redis"
@@ -54,9 +61,6 @@ class Hiera
         end
 
         it "returns all Redis cluster nodes for CloudFormation stack of EC2 instance" do
-          scope = { "ec2_instance_id" => "some-ec2-instance-id" }
-          elasticache = Aws::ElastiCache.new scope
-
           client = double
           allow(client).to receive(:describe_cache_clusters).and_return(cache_clusters)
           AWS::ElastiCache::Client.stub(:new => client)
@@ -77,7 +81,7 @@ class Hiera
           {
             :cache_clusters => [{
               :cache_nodes => [
-                { :endpoint => { :address => "1.1.1.1", :port => 1234 } },
+                some_cache_node,
 
               ],
               :replication_group_id => "some-group-id",
@@ -96,9 +100,6 @@ class Hiera
         end
 
         it "returns all Redis replica groups for CloudFormation stack of EC2 instance" do
-          scope = { "ec2_instance_id" => "some-ec2-instance-id" }
-          elasticache = Aws::ElastiCache.new scope
-
           client = double
           allow(client).to receive(:describe_cache_clusters).and_return(cache_clusters)
           allow(client).to receive(:describe_replication_groups).with(:replication_group_id => "some-group-id").and_return(replication_groups)
@@ -118,16 +119,14 @@ class Hiera
               :cache_clusters => [
                 {
                   :cache_nodes => [
-                    { :endpoint => { :address => "1.1.1.1", :port => 1234 } },
-
+                    some_cache_node,
                   ],
                   :replication_group_id => "some-group-id",
                   :engine => "redis",
                 },
                 {
                   :cache_nodes => [
-                    { :endpoint => { :address => "2.2.2.2", :port => 1234 } },
-
+                    another_cache_node,
                   ],
                   :replication_group_id => "some-group-id",
                   :engine => "redis",
@@ -146,9 +145,6 @@ class Hiera
           end
 
           it "returns a deduplicated list of Redis replica groups" do
-            scope = { "ec2_instance_id" => "some-ec2-instance-id" }
-            elasticache = Aws::ElastiCache.new scope
-
             client = double
             allow(client).to receive(:describe_cache_clusters).and_return(cache_clusters)
             allow(client).to receive(:describe_replication_groups).with(:replication_group_id => "some-group-id").and_return(replication_groups)
@@ -188,8 +184,7 @@ class Hiera
                 :cache_clusters => [
                   {
                     :cache_nodes => [
-                      { :endpoint => { :address => "1.1.1.1", :port => 1234 } },
-
+                      some_cache_node,
                     ],
                     :replication_group_id => "some-group-id",
                     :engine => "redis",
@@ -200,8 +195,7 @@ class Hiera
                 :cache_clusters => [
                   {
                     :cache_nodes => [
-                      { :endpoint => { :address => "2.2.2.2", :port => 1234 } },
-
+                      another_cache_node,
                     ],
                     :engine => "redis",
                   },
@@ -220,8 +214,6 @@ class Hiera
           end
 
           it "returns all Redis replica groups and does not fail" do
-            scope = { "ec2_instance_id" => "some-ec2-instance-id" }
-            elasticache = Aws::ElastiCache.new scope
 
             client = double
             allow(client).to receive(:describe_cache_clusters) do |options|
@@ -264,12 +256,9 @@ class Hiera
           end
 
           it "returns all Memcached cluster nodes for CloudFormation stack of EC2 instance" do
-            scope = { "ec2_instance_id" => "some-ec2-instance-id" }
-            elasticache = Aws::ElastiCache.new scope
-
-            ec_memcached_client = double
-            allow(ec_memcached_client).to receive(:describe_cache_clusters).and_return(cache_clusters)
-            AWS::ElastiCache::Client.stub(:new => ec_memcached_client)
+            client = double
+            allow(client).to receive(:describe_cache_clusters).and_return(cache_clusters)
+            AWS::ElastiCache::Client.stub(:new => client)
 
             expect(elasticache.memcached_cluster_nodes_for_cfn_stack).to eq [
               {
