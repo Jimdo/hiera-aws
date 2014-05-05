@@ -39,7 +39,7 @@ class Hiera
         def db_instances_with_tags(tags)
           db_instances.select do |i|
             all_tags = db_instance_tags(i.fetch(:db_instance_identifier))
-            tags.all? { |k, v| tags[k] == all_tags[k] }
+            tags.all? { |k, _| tags[k] == all_tags[k] }
           end
         end
 

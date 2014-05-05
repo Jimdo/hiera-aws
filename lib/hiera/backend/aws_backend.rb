@@ -18,7 +18,7 @@ class Hiera
         Hiera.debug("AWS backend initialized")
       end
 
-      def lookup(key, scope, order_override, resolution_type)
+      def lookup(key, scope, order_override, resolution_type) # rubocop:disable UnusedMethodArgument
         answer = nil
 
         Hiera.debug("Looking up '#{key}' in AWS backend")
