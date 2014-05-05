@@ -5,9 +5,24 @@ class Hiera
     module Aws
       # Implementation of Hiera keys for aws/elasticache
       class ElastiCache < Base
-          #
-        # XXX: Lots of spiked code ahead that MUST be refactored.
-        #
+        def redis_cluster_replica_groups_for_cfn_stack
+          cluster_replica_groups_for_cfn_stack(:redis)
+        end
+
+        def redis_cluster_nodes_for_cfn_stack
+          cluster_nodes_for_cfn_stack(:redis).map do |node|
+            { "endpoint" => stringify_keys(node.fetch(:endpoint)) }
+          end
+        end
+
+        def memcached_cluster_nodes_for_cfn_stack
+          cluster_nodes_for_cfn_stack(:memcached).map do |node|
+            node.fetch(:endpoint)[:address]
+          end
+        end
+
+        private
+
         def cfn_stack_name(instance_id)
           client = AWS::EC2.new
           instances = client.instances[instance_id]
@@ -47,13 +62,8 @@ class Hiera
           raise MissingFactError, "ec2_instance_id not found" unless ec2_instance_id
 
           stack_name = cfn_stack_name(ec2_instance_id)
-          endpoints = []
           clusters = cache_clusters_in_cfn_stack(stack_name, cluster_engine)
-          clusters.each do |cluster|
-            nodes = cluster.fetch(:cache_nodes)
-            endpoints += nodes.map { |node| node[:endpoint][:address] }
-          end
-          endpoints
+          clusters.reduce([]) { |a, e| a + e.fetch(:cache_nodes) }
         end
 
         def cluster_replica_groups_for_cfn_stack(cluster_engine = nil)
@@ -84,18 +94,6 @@ class Hiera
               "primary_endpoint"     => stringify_keys(v[:primary_endpoint])
             }
           end
-        end
-
-        def redis_cluster_replica_groups_for_cfn_stack
-          cluster_replica_groups_for_cfn_stack(:redis)
-        end
-
-        def redis_cluster_nodes_for_cfn_stack
-          cluster_nodes_for_cfn_stack(:redis)
-        end
-
-        def memcached_cluster_nodes_for_cfn_stack
-          cluster_nodes_for_cfn_stack(:memcached)
         end
       end
     end

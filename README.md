@@ -68,12 +68,19 @@ The backend currently supports the following keys that you can pass to the
 
 Returns an array of all Redis cluster nodes for the CloudFormation stack of an
 EC2 instance. The instance is identified by the Puppet fact `$ec2_instance_id`.
-The returned array has the format `["host1", "host2"]`.
 
 Usage:
 
 ```
 cluster_nodes = hiera("redis_cluster_nodes_for_cfn_stack")
+```
+
+For each Redis cluster node in the array the following hash is returned:
+
+```json
+{
+    "endpoint" => { "address" => "some.redis.endpoint", "port" => 6379 },
+}
 ```
 
 ### redis_cluster_replica_groups_for_cfn_stack
