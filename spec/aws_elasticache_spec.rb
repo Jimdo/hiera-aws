@@ -65,7 +65,10 @@ class Hiera
           allow(client).to receive(:describe_cache_clusters).and_return(cache_clusters)
           AWS::ElastiCache::Client.stub(:new => client)
 
-          expect(elasticache.redis_cluster_nodes_for_cfn_stack).to eq ["1.1.1.1", "2.2.2.2"]
+          expect(elasticache.redis_cluster_nodes_for_cfn_stack).to eq [
+            { "endpoint" => { "address" => "1.1.1.1", "port" => 1234 } },
+            { "endpoint" => { "address" => "2.2.2.2", "port" => 1234 } },
+          ]
         end
       end
 
