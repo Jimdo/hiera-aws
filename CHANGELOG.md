@@ -1,3 +1,8 @@
+## v0.4.1 (May 12 2014)
+
+* Disable real HTTP connections in RSpec tests by using
+  [WebMock](https://github.com/bblimke/webmock).
+
 ## v0.4.0 (May 8 2014)
 
 * Change `redis_cluster_nodes_for_cfn_stack` to return endpoint address and port
