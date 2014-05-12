@@ -1,3 +1,4 @@
+require "spec_helper"
 require "hiera/backend/aws/rds"
 
 class Hiera
