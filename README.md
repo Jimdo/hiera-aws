@@ -118,8 +118,8 @@ cluster_nodes = hiera("memcached_cluster_nodes_for_cfn_stack")
 
 ### rds_instances tag=value...
 
-Returns an array of all RDS database instances that have one or more tags
-assigned.
+Returns an array of all RDS database instances that are in state "available" and
+have one or more tags assigned.
 
 For each instance in the array the following hash is returned:
 
