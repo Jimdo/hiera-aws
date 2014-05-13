@@ -33,7 +33,8 @@ class Hiera
         private
 
         def db_instances
-          @db_instances ||= @client.describe_db_instances[:db_instances]
+          @client.describe_db_instances[:db_instances]
+            .select { |i| i[:db_instance_status] == "available" }
         end
 
         def db_instances_with_tags(tags)
