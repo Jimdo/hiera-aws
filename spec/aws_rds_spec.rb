@@ -10,18 +10,27 @@ class Hiera
           :db_instances => [
             {
               :db_instance_identifier => "db1",
-              :endpoint => { :address => "db1.some-region.rds.amazonaws.com" },
-              :engine => "mysql"
+              :endpoint               => { :address => "db1.some-region.rds.amazonaws.com" },
+              :engine                 => "mysql",
+              :db_instance_status     => "available",
             },
             {
               :db_instance_identifier => "db2",
-              :endpoint => { :address => "db2.some-region.rds.amazonaws.com" },
-              :engine => "mysql"
+              :endpoint               => { :address => "db2.some-region.rds.amazonaws.com" },
+              :engine                 => "mysql",
+              :db_instance_status     => "available",
             },
             {
               :db_instance_identifier => "db3",
-              :endpoint => { :address => "db3.some-region.rds.amazonaws.com" },
-              :engine => "mysql"
+              :endpoint               => { :address => "db3.some-region.rds.amazonaws.com" },
+              :engine                 => "mysql",
+              :db_instance_status     => "available",
+            },
+            {
+              :db_instance_identifier => "db4",
+              :endpoint               => nil,
+              :engine                 => "mysql",
+              :db_instance_status     => "modifying",
             }
           ]
         }
@@ -40,6 +49,12 @@ class Hiera
             ]
           },
           "arn:aws:rds:some-region:12345678:db:db3" => {
+            :tag_list => [
+              { :key => "environment", :value => "production" },
+              { :key => "role", :value => "mgmt-db" }
+            ]
+          },
+          "arn:aws:rds:some-region:12345678:db:db4" => {
             :tag_list => [
               { :key => "environment", :value => "production" },
               { :key => "role", :value => "mgmt-db" }
