@@ -85,8 +85,9 @@ class Hiera
           {
             :replication_groups => [{
               :node_groups => [{
-                :primary_endpoint => { :address => "some.replication.group.primary.endpoint", :port => 1234 }
-              }]
+                :primary_endpoint => { :address => "some.replication.group.primary.endpoint", :port => 1234 },
+              }],
+              :status => "available",
             }]
           }
         end
@@ -128,8 +129,9 @@ class Hiera
             {
               :replication_groups => [{
                 :node_groups => [{
-                  :primary_endpoint => { :address => "some.replication.group.primary.endpoint", :port => 1234 }
-                }]
+                  :primary_endpoint => { :address => "some.replication.group.primary.endpoint", :port => 1234 },
+                }],
+                :status => "available",
               }]
             }
           end
@@ -195,8 +197,9 @@ class Hiera
             {
               :replication_groups => [{
                 :node_groups => [{
-                  :primary_endpoint => { :address => "some.replication.group.primary.endpoint", :port => 1234 }
-                }]
+                  :primary_endpoint => { :address => "some.replication.group.primary.endpoint", :port => 1234 },
+                }],
+                :status => "available",
               }]
             }
           end
