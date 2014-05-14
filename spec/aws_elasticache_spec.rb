@@ -188,9 +188,8 @@ class Hiera
         end
 
         context "two replica groups with one cache cluster each, one cache cluster being newer than the other" do
-          now = Time.new()
-          later = now + 1
-
+          let(:time_earlier) { Time.new() }
+          let(:time_later) { time_earlier + 1 }
           let(:cache_clusters) do
             {
               :cache_clusters => [
@@ -199,14 +198,14 @@ class Hiera
                   :replication_group_id => "some-group-id",
                   :engine               => "redis",
                   :cache_cluster_status => "available",
-                  :cache_cluster_create_time => now,
+                  :cache_cluster_create_time => time_earlier,
                 },
                 {
                   :cache_nodes          => [another_cache_node],
                   :replication_group_id => "another-group-id",
                   :engine               => "redis",
                   :cache_cluster_status => "available",
-                  :cache_cluster_create_time => later,
+                  :cache_cluster_create_time => time_later,
                 },
               ]
             }
@@ -245,12 +244,12 @@ class Hiera
               {
                 "replication_group_id" => "some-group-id",
                 "primary_endpoint"     => { "address" => "some.replication.group.primary.endpoint", "port" => 1234 },
-                "latest_cache_cluster_create_time" => now,
+                "latest_cache_cluster_create_time" => time_earlier.strftime("%s"),
               },
               {
                 "replication_group_id" => "another-group-id",
                 "primary_endpoint"     => { "address" => "another.replication.group.primary.endpoint", "port" => 1234 },
-                "latest_cache_cluster_create_time" => later,
+                "latest_cache_cluster_create_time" => time_later.strftime("%s"),
               },
             ]
           end
