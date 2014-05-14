@@ -1,5 +1,6 @@
 require "spec_helper"
 require "hiera/backend/aws/elasticache"
+require "date"
 
 class Hiera
   module Backend # rubocop:disable Documentation
@@ -181,6 +182,75 @@ class Hiera
               {
                 "replication_group_id" => "some-replication-group-id",
                 "primary_endpoint"     => { "address" => "some.replication.group.primary.endpoint", "port" => 1234 }
+              },
+            ]
+          end
+        end
+
+        context "two replica groups with one cache cluster each, one cache cluster being newer than the other" do
+          now = Time.new()
+          later = now + 1
+
+          let(:cache_clusters) do
+            {
+              :cache_clusters => [
+                {
+                  :cache_nodes          => [some_cache_node],
+                  :replication_group_id => "some-group-id",
+                  :engine               => "redis",
+                  :cache_cluster_status => "available",
+                  :cache_cluster_create_time => now,
+                },
+                {
+                  :cache_nodes          => [another_cache_node],
+                  :replication_group_id => "another-group-id",
+                  :engine               => "redis",
+                  :cache_cluster_status => "available",
+                  :cache_cluster_create_time => later,
+                },
+              ]
+            }
+          end
+
+          let(:replication_groups_some_cluster) do
+            {
+              :replication_groups => [{
+                :replication_group_id => "some-group-id",
+                :node_groups => [{
+                  :primary_endpoint => { :address => "some.replication.group.primary.endpoint", :port => 1234 },
+                }],
+                :status => "available" }]
+            }
+          end
+
+          let(:replication_groups_another_cluster) do
+            {
+              :replication_groups => [{
+                :replication_group_id => "another-group-id",
+                :node_groups => [{
+                  :primary_endpoint => { :address => "another.replication.group.primary.endpoint", :port => 1234 },
+                }],
+                :status => "available" }]
+            }
+          end
+
+          it "returns the most current cache cluster creation time for each replication group" do
+            client = double
+            allow(client).to receive(:describe_cache_clusters).and_return(cache_clusters)
+            allow(client).to receive(:describe_replication_groups).with(:replication_group_id => "some-group-id").and_return(replication_groups_some_cluster)
+            allow(client).to receive(:describe_replication_groups).with(:replication_group_id => "another-group-id").and_return(replication_groups_another_cluster)
+            AWS::ElastiCache::Client.stub(:new => client)
+
+            expect(elasticache.redis_cluster_replica_groups_for_cfn_stack).to eq [
+              {
+                "replication_group_id" => "some-group-id",
+                "primary_endpoint"     => { "address" => "some.replication.group.primary.endpoint", "port" => 1234 },
+                "latest_cache_cluster_create_time" => now,
+              },
+              {
+                "replication_group_id" => "another-group-id",
+                "primary_endpoint"     => { "address" => "another.replication.group.primary.endpoint", "port" => 1234 },
+                "latest_cache_cluster_create_time" => later,
               },
             ]
           end
