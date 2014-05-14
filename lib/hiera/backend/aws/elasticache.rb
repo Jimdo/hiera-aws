@@ -47,6 +47,8 @@ class Hiera
             cluster_id = r.physical_resource_id
             cache_cluster_info(cluster_id)
           end.select do |cluster|
+            cluster.fetch(:cache_cluster_status) == "available"
+          end.select do |cluster|
             # Filter by engine type if provided
             if cluster_engine
               cluster.fetch(:engine) == cluster_engine.to_s
@@ -80,8 +82,10 @@ class Hiera
 
             client = AWS::ElastiCache::Client.new
             replication_group = client.describe_replication_groups(:replication_group_id => replication_group_id)[:replication_groups].first
+            next unless replication_group.fetch(:status) == "available"
 
-            primary_endpoint = replication_group.fetch(:node_groups).first.fetch(:primary_endpoint)
+            node_group = replication_group.fetch(:node_groups).first
+            primary_endpoint = node_group.fetch(:primary_endpoint)
 
             replica_groups[replication_group_id] = {
               :primary_endpoint => primary_endpoint
