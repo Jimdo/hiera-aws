@@ -47,6 +47,8 @@ class Hiera
             cluster_id = r.physical_resource_id
             cache_cluster_info(cluster_id)
           end.select do |cluster|
+            cluster.fetch(:cache_cluster_status) == "available"
+          end.select do |cluster|
             # Filter by engine type if provided
             if cluster_engine
               cluster.fetch(:engine) == cluster_engine.to_s

@@ -67,7 +67,8 @@ The backend currently supports the following keys that you can pass to the
 ### redis_cluster_nodes_for_cfn_stack
 
 Returns an array of all Redis cluster nodes for the CloudFormation stack of an
-EC2 instance. The instance is identified by the Puppet fact `$ec2_instance_id`.
+EC2 instance. Only cluster nodes that are in state "available" are returned. The
+instance is identified by the Puppet fact `$ec2_instance_id`.
 
 Usage:
 
@@ -107,8 +108,9 @@ For each replica group in the array the following hash is returned:
 ### memcached_cluster_nodes_for_cfn_stack
 
 Returns an array of all Memcached cluster nodes for the CloudFormation stack of
-an EC2 instance. The instance is identified by the Puppet fact
-`$ec2_instance_id`. The returned array has the format `["host1", "host2"]`.
+an EC2 instance. Only cluster nodes that are in state "available" are returned.
+The instance is identified by the Puppet fact `$ec2_instance_id`. The returned
+array has the format `["host1", "host2"]`.
 
 Usage:
 

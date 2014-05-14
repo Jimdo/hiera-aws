@@ -44,12 +44,9 @@ class Hiera
         let(:cache_clusters) do
           {
             :cache_clusters => [{
-              :cache_nodes => [
-                some_cache_node,
-                another_cache_node
-
-              ],
-              :engine => "redis"
+              :cache_nodes          => [some_cache_node, another_cache_node],
+              :engine               => "redis",
+              :cache_cluster_status => "available",
             }]
           }
         end
@@ -77,12 +74,10 @@ class Hiera
         let(:cache_clusters) do
           {
             :cache_clusters => [{
-              :cache_nodes => [
-                some_cache_node,
-
-              ],
+              :cache_nodes          => [some_cache_node],
               :replication_group_id => "some-group-id",
-              :engine => "redis",
+              :engine               => "redis",
+              :cache_cluster_status => "available",
             }]
           }
         end
@@ -115,18 +110,16 @@ class Hiera
             {
               :cache_clusters => [
                 {
-                  :cache_nodes => [
-                    some_cache_node,
-                  ],
+                  :cache_nodes          => [some_cache_node],
                   :replication_group_id => "some-group-id",
-                  :engine => "redis",
+                  :engine               => "redis",
+                  :cache_cluster_status => "available",
                 },
                 {
-                  :cache_nodes => [
-                    another_cache_node,
-                  ],
+                  :cache_nodes          => [another_cache_node],
                   :replication_group_id => "some-group-id",
-                  :engine => "redis",
+                  :engine               => "redis",
+                  :cache_cluster_status => "available",
                 },
               ]
             }
@@ -180,21 +173,19 @@ class Hiera
               "some-cluster-id" => {
                 :cache_clusters => [
                   {
-                    :cache_nodes => [
-                      some_cache_node,
-                    ],
+                    :cache_nodes          => [some_cache_node],
                     :replication_group_id => "some-group-id",
-                    :engine => "redis",
+                    :engine               => "redis",
+                    :cache_cluster_status => "available",
                   },
                 ]
               },
               "another-cluster-id" => {
                 :cache_clusters => [
                   {
-                    :cache_nodes => [
-                      another_cache_node,
-                    ],
-                    :engine => "redis",
+                    :cache_nodes          => [another_cache_node],
+                    :engine               => "redis",
+                    :cache_cluster_status => "available",
                   },
                 ]
               }
@@ -244,10 +235,11 @@ class Hiera
               :cache_clusters => [{
                 :cache_nodes => [
                   { :endpoint => { :address => "3.3.3.3", :port => 5678 } },
-                  { :endpoint => { :address => "4.4.4.4", :port => 5678 } }
+                  { :endpoint => { :address => "4.4.4.4", :port => 5678 } },
 
                 ],
-                :engine => "memcached"
+                :engine => "memcached",
+                :cache_cluster_status => "available",
               }]
             }
           end
