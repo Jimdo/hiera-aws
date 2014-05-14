@@ -3,6 +3,8 @@ AllCops:
     - Gemfile
     - Rakefile
 
+DotPosition:
+  Enabled: false
 Encoding:
   Enabled: false
 HashSyntax:
