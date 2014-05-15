@@ -143,45 +143,45 @@ class Hiera
 
         allow(@client).to receive(:describe_cache_clusters).and_return(all_cache_clusters)
 
-        allow(@client).to receive(:describe_cache_clusters)
-          .with(
+        allow(@client).to receive(:describe_cache_clusters).
+          with(
             :cache_cluster_id => "some-redis-cluster-id",
             :show_cache_node_info => true
-          )
-          .and_return(:cache_clusters => [some_redis_cache_cluster])
+          ).
+          and_return(:cache_clusters => [some_redis_cache_cluster])
 
-        allow(@client).to receive(:describe_cache_clusters)
-          .with(
+        allow(@client).to receive(:describe_cache_clusters).
+          with(
             :cache_cluster_id => "another-redis-cluster-id",
             :show_cache_node_info => true
-          )
-          .and_return(:cache_clusters => [another_redis_cache_cluster])
+          ).
+          and_return(:cache_clusters => [another_redis_cache_cluster])
 
-        allow(@client).to receive(:describe_cache_clusters)
-          .with(
+        allow(@client).to receive(:describe_cache_clusters).
+          with(
             :cache_cluster_id => "some-memcache-cluster-id",
             :show_cache_node_info => true
-          )
-          .and_return(:cache_clusters => [some_memcache_cache_cluster])
+          ).
+          and_return(:cache_clusters => [some_memcache_cache_cluster])
 
-        allow(@client).to receive(:describe_cache_clusters)
-          .with(
+        allow(@client).to receive(:describe_cache_clusters).
+          with(
             :cache_cluster_id => "another-memcache-cluster-id",
             :show_cache_node_info => true
-          )
-          .and_return(:cache_clusters => [another_memcache_cache_cluster])
+          ).
+          and_return(:cache_clusters => [another_memcache_cache_cluster])
 
-        allow(@client).to receive(:describe_replication_groups)
-          .with(
+        allow(@client).to receive(:describe_replication_groups).
+          with(
             :replication_group_id => "some-replication-group-id"
-          )
-          .and_return(:replication_groups => [some_replication_group])
+          ).
+          and_return(:replication_groups => [some_replication_group])
 
-        allow(@client).to receive(:describe_replication_groups)
-          .with(
+        allow(@client).to receive(:describe_replication_groups).
+          with(
             :replication_group_id => "another-replication-group-id"
-          )
-          .and_return(:replication_groups => [another_replication_group])
+          ).
+          and_return(:replication_groups => [another_replication_group])
 
         allow(@client).to receive(:describe_replication_groups).with({}).and_return(all_replication_groups)
       end
