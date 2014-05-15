@@ -1,3 +1,12 @@
+## v0.5.0 (May 15 2014)
+
+* Change `redis_cluster_nodes_for_cfn_stack`, `memcached_cluster_nodes_for_cfn_stack`,
+  and `redis_cluster_replica_groups_for_cfn_stack` to only return resources that
+  are in state "available".
+* Change `redis_cluster_replica_groups_for_cfn_stack` response to include
+  `latest_cache_cluster_create_time`, which is the creation time unix timestamp
+  of the most current cache cluster in each replication group.
+
 ## v0.4.1 (May 12 2014)
 
 * Disable real HTTP connections in RSpec tests by using
