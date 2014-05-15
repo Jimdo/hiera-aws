@@ -73,6 +73,7 @@ class Hiera
           raise MissingFactError, "ec2_instance_id not found" unless ec2_instance_id
 
           replica_groups = {}
+          cluster_create_times = {}
           stack_name = cfn_stack_name(ec2_instance_id)
 
           clusters = cache_clusters_in_cfn_stack(stack_name, cluster_engine)
@@ -80,7 +81,13 @@ class Hiera
             replication_group_id = cluster[:replication_group_id]
             next unless replication_group_id
 
+            cache_cluster_create_time = cluster.fetch(:cache_cluster_create_time)
+            if cluster_create_times[replication_group_id].nil? || cluster_create_times[replication_group_id] < cache_cluster_create_time
+              cluster_create_times[replication_group_id] = cache_cluster_create_time
+            end
+
             client = AWS::ElastiCache::Client.new
+
             replication_group = client.describe_replication_groups(:replication_group_id => replication_group_id)[:replication_groups].first
             next unless replication_group.fetch(:status) == "available"
 
@@ -95,7 +102,8 @@ class Hiera
           replica_groups.map do |k, v|
             {
               "replication_group_id" => k,
-              "primary_endpoint"     => stringify_keys(v[:primary_endpoint])
+              "primary_endpoint"     => stringify_keys(v[:primary_endpoint]),
+              "latest_cache_cluster_create_time" => cluster_create_times[k].strftime("%s"),
             }
           end
         end
