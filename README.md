@@ -102,7 +102,8 @@ For each replica group in the array the following hash is returned:
 ```json
 {
     "replication_group_id" => "some-group-id",
-    "primary_endpoint"     => { "address" => "some.replication.group.primary.endpoint", "port" => 1234 }
+    "primary_endpoint"     => { "address" => "some.replication.group.primary.endpoint", "port" => 1234 },
+    "latest_cache_cluster_create_time" => 1400155680
 }
 ```
 
