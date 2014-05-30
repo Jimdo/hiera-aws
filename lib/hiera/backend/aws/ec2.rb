@@ -41,7 +41,7 @@ class Hiera
         end
 
         def ec2_instances_with_tags(tags)
-          filters = Array.new
+          filters = []
           tags.each do |tag|
             filters << { name: 'tag-key', values: [tag[0]] }
             filters << { name: 'tag-value', values: [tag[1]] }
