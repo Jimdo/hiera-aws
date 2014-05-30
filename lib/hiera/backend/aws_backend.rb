@@ -1,5 +1,6 @@
 require "hiera/backend/aws/elasticache"
 require "hiera/backend/aws/rds"
+require "hiera/backend/aws/ec2"
 
 class Hiera
   module Backend
@@ -73,6 +74,8 @@ class Hiera
           Hiera::Backend::Aws::ElastiCache.new
         when "rds"
           Hiera::Backend::Aws::RDS.new
+        when "ec2"
+          Hiera::Backend::Aws::EC2.new
         else
           nil
         end
