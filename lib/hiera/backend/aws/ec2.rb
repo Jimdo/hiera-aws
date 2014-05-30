@@ -3,7 +3,7 @@ require "hiera/backend/aws/base"
 class Hiera
   module Backend
     module Aws
-      # Implementation of Hiera keys for aws/rds
+      # Implementation of Hiera keys for aws/ec2
       class EC2 < Base
         def initialize(scope = {})
           super(scope)
@@ -37,9 +37,7 @@ class Hiera
         private
 
         def ec2_instances
-          @client.describe_instances[:reservation_set] #.
-          # @client.describe_instances[:ec2_instances] #.
-            # select { |i| i[:ec2_instance_status] == "available" }
+          @client.describe_instances[:reservation_set]
         end
 
         def ec2_instances_with_tags(tags)
@@ -51,16 +49,12 @@ class Hiera
           @client.describe_instances(:filters => filters)[:reservation_set]
         end
 
-#        def db_resource_name(db_instance_id)
-#          "arn:aws:rds:#{aws_region}:#{aws_account_number}:db:#{db_instance_id}"
-#        end
-
         def ec2_instance_tags(ec2_instance_id)
           tags = @client.list_tags_for_resource(:resource_name => ec2_resource_name(ec2_instance_id))
           Hash[tags[:tag_list].map { |t| [t[:key], t[:value]] }]
         end
 
-        # Prepare RDS instance data for consumption by Puppet. For Puppet to
+        # Prepare EC2 instance data for consumption by Puppet. For Puppet to
         # work, all hash keys have to be converted from symbols to strings.
         def prepare_instance_data(hash)
           {
