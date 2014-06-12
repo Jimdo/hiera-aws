@@ -5,6 +5,8 @@ AllCops:
 
 DotPosition:
   Enabled: false
+EachWithObject:
+  Enabled: false
 Encoding:
   Enabled: false
 HashSyntax:

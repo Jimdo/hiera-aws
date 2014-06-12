@@ -20,14 +20,13 @@ class Hiera
           return r if r
 
           args = key.split
-          if args.shift == "rds_instances"
-            if args.length > 0
-              tags = Hash[args.map { |t| t.split("=") }]
-              db_instances_with_tags(tags)
-            else
-              db_instances
-            end.map { |i| prepare_instance_data(i) }
-          end
+          return if args.shift != "rds_instances"
+          if args.length > 0
+            tags = Hash[args.map { |t| t.split("=") }]
+            db_instances_with_tags(tags)
+          else
+            db_instances
+          end.map { |i| prepare_instance_data(i) }
         end
 
         private

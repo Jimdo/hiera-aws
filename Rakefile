@@ -6,7 +6,7 @@ if RUBY_VERSION >= "1.9.2"
   require "rubocop/rake_task"
 
   desc "Run RuboCop style and lint checks"
-  Rubocop::RakeTask.new(:rubocop)
+  RuboCop::RakeTask.new(:rubocop)
 
   task :test => :rubocop
 end
