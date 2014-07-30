@@ -67,6 +67,12 @@ class Hiera
           backend.lookup(*params)
         end
 
+        it "properly forwards lookup to CloudFormation service" do
+          Backend.stub(:datasources).and_yield "aws/cloudformation"
+          expect_any_instance_of(Aws::Cloudformation).to receive(:lookup).with(key, scope)
+          backend.lookup(*params)
+        end
+
         it "returns nil if service returns empty result" do
           empty_result = []
           Backend.stub(:datasources).and_yield "aws/rds"
