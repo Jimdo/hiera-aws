@@ -1,3 +1,7 @@
+## v0.6.0 (Aug 04 2014)
+
+ * Added `cloudformation` in order to allow querying CloudFormation outputs.
+
 ## v0.5.0 (May 15 2014)
 
 * Change `redis_cluster_nodes_for_cfn_stack`, `memcached_cluster_nodes_for_cfn_stack`,
