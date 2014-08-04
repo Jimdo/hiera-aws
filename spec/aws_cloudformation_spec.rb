@@ -17,10 +17,20 @@ class Hiera
             {
               :outputs => [
                 {
+                  :output_key   => "unrelated_key",
+                  :output_value => "unrelated output",
+                  :description  => "foobar",
+                },
+                {
                   :output_key   => some_cfn_output_key,
                   :output_value => some_cfn_output_value,
                   :description  => "foobar",
-                }
+                },
+                {
+                  :output_key   => "another_unrelated_key",
+                  :output_value => "another unrelated output",
+                  :description  => "foobar",
+                },
               ]
             }
           ]
