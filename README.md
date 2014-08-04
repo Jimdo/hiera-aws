@@ -152,6 +152,20 @@ $instance_identifier = $rds_instances[0]['db_instance_identifier']
 $endpoint_address = $rds_instances[0]['endpoint']['address']
 ```
 
+### cloudformation stack=<stack-name> output=<output-name>
+
+Returns the value (string) of an output property of the given CloudFormation stack.
+
+Useful for example if you created a AWS access keypair in your CloudFormation
+stack and want to access the credentials via hiera.
+
+Usage:
+
+```
+# Get output "some_output_key" of CloudFormation stack "some_stack"
+value = hiera("cloudformation stack=some_stack output=some_output_key")
+```
+
 ## License and Authors
 
 * Author:: Mathias Lafeldt (mathias.lafeldt@jimdo.com)
