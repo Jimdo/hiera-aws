@@ -1,3 +1,5 @@
+require 'api_cache'
+
 require "hiera/backend/aws/elasticache"
 require "hiera/backend/aws/rds"
 require "hiera/backend/aws/cloudformation"
