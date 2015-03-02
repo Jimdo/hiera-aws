@@ -1,6 +1,12 @@
-## v0.6.0 (Aug 04 2014)
+## v0.6.1 (Mar 2 2014)
 
- * Added `cloudformation` in order to allow querying CloudFormation outputs.
+* Fix gem dependencies to depend on aws-sdk version 1.x. This fixes the
+  installation of hiera-aws on a clean system. Thanks to @gdhbashton for
+  reporting the bug.
+
+## v0.6.0 (Aug 4 2014)
+
+* Added `cloudformation` in order to allow querying CloudFormation outputs.
 
 ## v0.5.0 (May 15 2014)
 
