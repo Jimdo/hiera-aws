@@ -8,10 +8,10 @@ class Hiera
     class Aws_backend # rubocop:disable ClassAndModuleCamelCase
       def initialize
         begin
-          require "aws-sdk"
+          require "aws-sdk-v1"
         rescue LoadError
           require "rubygems"
-          require "aws-sdk"
+          require "aws-sdk-v1"
         end
 
         setup_aws_config
