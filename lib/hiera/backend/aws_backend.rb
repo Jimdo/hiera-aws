@@ -1,3 +1,5 @@
+require 'api_cache'
+
 require "hiera/backend/aws/elasticache"
 require "hiera/backend/aws/rds"
 require "hiera/backend/aws/cloudformation"
@@ -20,23 +22,26 @@ class Hiera
       end
 
       def lookup(key, scope, order_override, resolution_type) # rubocop:disable UnusedMethodArgument
-        answer = nil
+        APICache.get(key, :cache => 3600) do
+          answer = nil
 
-        Hiera.debug("Looking up '#{key}' in AWS backend")
+          Hiera.debug("Looking up '#{key}' in AWS backend")
 
-        Backend.datasources(scope, order_override) do |source|
-          Hiera.debug("Looking for data source #{source}")
+          Backend.datasources(scope, order_override) do |source|
+            Hiera.debug("Looking for data source #{source}")
 
-          service_class = find_service_class(source)
-          next unless service_class
+            service_class = find_service_class(source)
+            next unless service_class
 
-          value = service_class.lookup(key, scope)
-          next if value.nil? || value.empty?
+            value = service_class.lookup(key, scope)
+            next if value.nil? || value.empty?
 
-          answer = Backend.parse_answer(value, scope)
-          break if answer
+            answer = Backend.parse_answer(value, scope)
+            break if answer
+          end
+          answer
         end
-        answer
+
       end
 
       private
