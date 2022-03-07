@@ -20,7 +20,7 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 1.8.3
+          ruby-version: 1.9.3
           bundler-cache: true
 
       - name: Execute Rake
