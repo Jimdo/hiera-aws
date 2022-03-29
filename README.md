@@ -1,6 +1,7 @@
-# Hiera AWS Backend
+# ⚠️ TravisCI
+As this repository hasn't been actively maintained for a long time, we decided to archive it without migrating from Travis CI to Github Actions. If you plan on unarchiving and making changes to this repository, you have to make sure that old Travis CI/CD jobs found in [.retired-travis.yml](.retired-travis.yml) are converted to Github Actions workflow(s) first.
 
-[![Build Status](https://travis-ci.org/Jimdo/hiera-aws.png?branch=master)](https://travis-ci.org/Jimdo/hiera-aws)
+# Hiera AWS Backend
 
 This backend for [Hiera] allows you to retrieve information from AWS that you
 can use in your Puppet code at runtime. For example, you can ask the backend to
