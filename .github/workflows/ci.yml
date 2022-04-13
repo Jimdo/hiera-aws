@@ -1,0 +1,27 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install nokogiri dependencies
+        run: sudo apt-get install pkg-config libxml2-dev libxslt-dev
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 1.9.3
+          bundler-cache: true
+
+      - name: Execute Rake
+        run: bundle exec rake test
